@@ -1,4 +1,6 @@
-﻿namespace ClinicAPI.Service
+﻿using ClinicAPI.Repositories;
+
+namespace ClinicAPI.Service
 {
     public class AppointmentService : IAppointmentService
     {
