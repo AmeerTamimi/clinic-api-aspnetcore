@@ -1,4 +1,26 @@
 @baseUrl = http://localhost:5234
 
 ###
-GET {{baseUrl}}
+GET {{baseUrl}}/route-table
+
+###
+GET {{baseurl}}/patients
+
+###
+GET {{baseurl}}/patients/4
+
+###
+GET {{baseurl}}/doctors
+
+###
+GET {{baseurl}}/doctors/2
+
+###
+GET {{baseurl}}/doctors/patients
+
+###
+GET {{baseurl}}/doctors
+###
+GET {{baseurl}}/appointments
+###
+GET {{baseurl}}/appointments/7

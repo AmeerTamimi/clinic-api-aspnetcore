@@ -6,10 +6,12 @@ using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// ======================================== DI (registering services and configuring Dependecies) Goes Here =================================
+
 builder.Services.AddOptions<ClinicSettings>()
     .Bind(builder.Configuration.GetSection(clinicName));
 
-// DI (registering services and configuring Dependecies) Goes Here ->
+builder.Services.AddControllers();
 
 // Service/Business Layer Services
 builder.Services.AddBusinessServices();
@@ -17,11 +19,13 @@ builder.Services.AddBusinessServices();
 // Infrastructure Layer Services
 builder.Services.AddInfrastructureServices();
 
-
-
 var app = builder.Build();
 
-// MiddleWares Goes here -> 
+// ============================================================== MiddleWares Goes here ===================================================
+
+// This will add all Controllers Endpoints to our Route-Table , so Asp.net could pick The controllers' Endpoints and not give 404
+app.MapControllers(); 
+
 
 // Logging + Timing MW
 app.Use(async (context, next) =>
@@ -82,9 +86,21 @@ app.Use(async (context, next) =>
 });
 
 
+// Getting appsettings.json file Configuration (Public Stuff)
 app.MapGet("/", (IOptionsSnapshot<ClinicSettings> options) => {
     return options.Value;
 });
+
+
+// Endpoint to get the route-table (which will be having All program endpoints -> i may use it for debugging)
+app.MapGet("/route-table", (IServiceProvider sp) =>
+{
+    var endpoints = sp.GetRequiredService<EndpointDataSource>()
+    .Endpoints.Select(sp => sp.DisplayName);
+
+    return Results.Ok(endpoints);
+});
+
 
 
 app.Run();
