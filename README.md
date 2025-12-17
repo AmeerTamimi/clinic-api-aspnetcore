@@ -3,65 +3,60 @@
 A small ASP.NET Core Web API for a clinic system:
 Patients, Doctors, Appointments.
 
-Built while following **Eng. Issam's ASP.NET Core Web API course**, and extended with my own structure and features
-(DI/IoC, repositories, services, middleware, routing, etc.).
+Built while following **Eng. Issam's ASP.NET Core Web API course**, and extended with my own structure
+(DI/IoC, repositories, services, controllers, model binding, etc.).
 
-## Current Status
+## What’s implemented
 
-- Models for Patient, Doctor, Appointment
-- DbContext (`ClinicDbContext`)
-- Repository layer (`I*Repo` + `*Repo`)
-- Service layer (`I*Service` + `*Service`)
-- Grouped DI registrations (Business + Infrastructure)
-- Configuration bound with Options pattern
-- Controller routing + route parameters and constraints
-- Custom middlewares (logging/timing, response header, blocking)
+- Controllers for **Patients**, **Doctors**, **Appointments**
+- Domain models filled (entities)
+- Repository layer (`I*Repo` + `*Repo`) filled (currently dummy/incomplete persistence logic)
+- Service layer (`I*Service` + `*Service`) filled (DTO mapping + orchestration)
+- Request/Response contracts:
+  - `Requests/` for input DTOs (create/update/search)
+  - `Responses/` for output DTOs
+- Tested endpoints using `.http` requests (POST/PUT for all 3 entities)
+- Helper endpoint: `GET /route-table`
 
-## Middlewares
+## Model Binding Used
 
-This project includes a few simple custom middlewares:
+- **Route params** (identity): `/patients/{id:int}`, `/doctors/{id:int}`, `/appointments/{id:int}`
+- **Query string** (search/list): `/patients/search`, `/doctors/search`, `/appointments/search`
+- **Body binding** (create/update): JSON `application/json`
 
-- **Logging + timing**
-  - Logs `Method`, `Path`, `StatusCode`, and request time (ms) to the console for every request.
-- **Response header**
-  - Adds `X-Name: Ameer` to every response header.
-  - Stores `"Name"` in `HttpContext.Items` so other middleware/endpoints can read it.
-- **Early block**
-  - Blocks access to `/admin/*` routes (returns `403 Forbidden`).
+## Endpoints
 
-## Routing
+### Patients
+- `GET /patients`
+- `GET /patients/{id:int}`
+- `GET /patients/search`
+- `POST /patients`
+- `PUT /patients/{id:int}`
 
-Routing is done using **Controllers** + attribute routing.
+### Doctors
+- `GET /doctors`
+- `GET /doctors/{id:int}`
+- `GET /doctors/search`
+- `POST /doctors`
+- `PUT /doctors/{id:int}`
 
-- Uses **route parameters** like `{id}`
-- Uses **route constraints** like `{id:int}` to ensure IDs are valid integers
-- Includes **nested routes** under doctors (patients/appointments for a doctor)
-
-### Endpoints
-
-**Patients**
-- `GET /Patients`
-- `GET /Patients/{id:int}`
-
-**Doctors**
-- `GET /Doctors`
-- `GET /Doctors/{id:int}`
-- `GET /Doctors/{id:int}/patients`
-- `GET /Doctors/{id:int}/appointments`
-
-**Appointments**
-- `GET /Appointments`
-- `GET /Appointments/{id:int}`
+### Appointments
+- `GET /appointments`
+- `GET /appointments/{id:int}`
+- `GET /appointments/search`
+- `POST /appointments`
+- `PUT /appointments/{id:int}`
 
 ## Project Structure
 
-- `Models/` — domain models (Patient, Doctor, Appointment)
-- `DB/` — `ClinicDbContext`
-- `Repository/` — repository interfaces and implementations
-- `Service/` — business logic services
 - `Controllers/` — API endpoints (routing + actions)
-- `GroupedRegistrations/` — extension methods for DI setup
-- `Configuration/` — options pattern settings
+- `Models/` — domain models (Patient, Doctor, Appointment)
+- `Persistence/` — `ClinicDbContext`
+- `Repositories/` — repository interfaces and implementations
+- `Service/` — business logic + DTO mapping
+- `Requests/` — input DTOs (Create/Update/Search)
+- `Responses/` — output DTOs
+- `GroupedRegistrations/` — grouped DI registrations
 - `Program.cs` — composition root (DI + middleware + routing)
 
 ## Run

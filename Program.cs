@@ -26,7 +26,6 @@ var app = builder.Build();
 // This will add all Controllers Endpoints to our Route-Table , so Asp.net could pick The controllers' Endpoints and not give 404
 app.MapControllers(); 
 
-
 // Logging + Timing MW
 app.Use(async (context, next) =>
 {
@@ -52,7 +51,6 @@ app.Use(async (context, next) =>
     }
     
 });
-
 
 // Adding headers to Requests MW
 app.Use(async (context, next) =>
@@ -85,12 +83,10 @@ app.Use(async (context, next) =>
     }
 });
 
-
 // Getting appsettings.json file Configuration (Public Stuff)
 app.MapGet("/", (IOptionsSnapshot<ClinicSettings> options) => {
     return options.Value;
 });
-
 
 // Endpoint to get the route-table (which will be having All program endpoints -> i may use it for debugging)
 app.MapGet("/route-table", (IServiceProvider sp) =>
@@ -100,8 +96,6 @@ app.MapGet("/route-table", (IServiceProvider sp) =>
 
     return Results.Ok(endpoints);
 });
-
-
 
 app.Run();
 

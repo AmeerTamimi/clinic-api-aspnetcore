@@ -1,6 +1,6 @@
-﻿namespace ClinicAPI.Models
+﻿namespace ClinicAPI.Responses
 {
-    public class Doctor
+    public class DoctorResponse
     {
         public int DoctorId { get; set; }
         public string FirstName { get; set; }
@@ -8,9 +8,5 @@
         public string Specialist { get; set; }
         public int Age { get; set; }
         public int YearOfExperience { get; set; }
-        public List<Patient>? Patients { get; set; }
-        public List<Appointment>? Appointments { get; set; }
-        public DateTimeOffset CreatedAt { get; set; }
-        public bool IsDeleted { get; set; }
     }
 }
