@@ -2,6 +2,7 @@
 using ClinicAPI.Requests;
 using ClinicAPI.Service;
 using ClinicAPI.Responses;
+using ClinicAPI.Query;
 
 namespace ClinicAPI.Controllers
 {

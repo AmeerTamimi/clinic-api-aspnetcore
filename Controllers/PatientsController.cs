@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using ClinicAPI.Models;
+using ClinicAPI.Query;
 using ClinicAPI.Requests;
-using ClinicAPI.Service;
 using ClinicAPI.Responses;
+using ClinicAPI.Service;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers
 {
@@ -12,13 +14,10 @@ namespace ClinicAPI.Controllers
     public class PatientsController(IPatientService _patientService) : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] int page = 1 , [FromQuery] int pageSize = 3)
         {
-            return Ok(new[] // Dummy (Only For Now i swear)
-            {
-                "Patient #1" ,
-                "Patient #2"
-            });
+            var patients = _patientService.GetPatientPage(page, pageSize);
+            return Ok(patients);
         }
 
         // Route Parameter Endpoint
@@ -40,8 +39,16 @@ namespace ClinicAPI.Controllers
         [HttpPost]
         public IActionResult AddPatient([FromBody] CreatePatientRequest NewPatient)
         {
-            PatientResponse Patient = _patientService.AddNewPatient(NewPatient);
-            return Ok(Patient); // result will be as a json
+            try
+            {
+                PatientResponse Patient = _patientService.AddNewPatient(NewPatient);
+                return Ok(Patient); // result will be as a json
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+           
         }
 
         // Updating Patient Endpoint

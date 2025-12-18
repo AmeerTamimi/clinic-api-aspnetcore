@@ -1,9 +1,7 @@
 ﻿namespace ClinicAPI.Requests
 {
-    public class CreateAppointmentRequest
+    public class CreateAppointmentRequest : AppointmentRequest
     {
-        public int PatientId { get; set; }
-        public int DoctorId { get; set; }
-        public DateOnly Date { get; set; }
+        
     }
 }

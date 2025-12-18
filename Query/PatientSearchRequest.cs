@@ -1,4 +1,4 @@
-﻿namespace ClinicAPI.Requests
+﻿namespace ClinicAPI.Query
 {
     public class PatientSearchRequest
     {

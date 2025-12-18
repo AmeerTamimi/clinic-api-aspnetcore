@@ -1,12 +1,14 @@
 ﻿using ClinicAPI.Models;
-using ClinicAPI.Responses;
 
 namespace ClinicAPI.Repositories
 {
     public interface IDoctorRepo
     {
-        Doctor GetDoctorById(int DoctorId);
-        Doctor AddNewDoctor(Doctor NewDoctor);
-        Doctor UpdateDoctor(Doctor Doctor , int DoctorId);
+        Doctor? GetDoctorById(int doctorId);
+        Doctor AddNewDoctor(Doctor newDoctor);
+        Doctor UpdateDoctor(Doctor doctor , int doctorId);
+        bool DeleteDoctorById(int doctorId);
+        int GetDoctorCount();
+        List<Doctor> GetDoctorPage(int page, int pageSize);
     }
 }

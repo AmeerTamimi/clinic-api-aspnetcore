@@ -21,6 +21,7 @@ Accept: application/json
 ### Updating Existing Patient
 PUT {{baseUrl}}/patients/10
 Content-Type: application/json
+Accept: application/json
 
 {  "patientId": 0,
   "FirstName" : "Ameer",
@@ -51,7 +52,6 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "DoctorId": 0,
   "FirstName": "Ahmad",
   "LastName": "Salameh",
   "Specialist": "Cardiology",
@@ -76,8 +76,10 @@ Content-Type: application/json
 Accept: application/json
 
 {
-  "AppointmentId": 0,
   "PatientId": 5,
   "DoctorId": 10,
   "Date": "2025-12-22"
 }
+
+###
+GET {{baseUrl}}/patients?page=12

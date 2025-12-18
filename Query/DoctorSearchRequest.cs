@@ -1,7 +1,6 @@
-﻿namespace ClinicAPI.Requests
-
+﻿namespace ClinicAPI.Query
 {
-    public class AppointmentSearchRequest
+    public class DoctorSearchRequest
     {
         // For Search in General
         public string? Query { get; set; }
@@ -11,11 +10,11 @@
         public int PageSize { get; set; } = 5;
 
         // Sorting
-        public List<string> SortBy { get; set; } = new List<string>() { "Date" };
+        public List<string> SortBy { get; set; } = new List<string>() { "Name" };
         public bool SortDesc { get; set; } = false;
 
         // Filtering
-        public DateOnly? From { get; set; }
-        public DateOnly? To { get; set; }
+        public int? MinAge { get; set; }
+        public int? MaxAge { get; set; }
     }
 }

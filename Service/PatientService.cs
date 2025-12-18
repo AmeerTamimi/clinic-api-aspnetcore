@@ -7,80 +7,113 @@ namespace ClinicAPI.Service
 {
     public class PatientService : IPatientService
     {
-        private readonly IPatientRepo _PateintRepo;
+        private readonly IPatientRepo _patientRepo;
+        private readonly IDoctorRepo _doctorRepo;
 
-        public PatientService(IPatientRepo PatientRepo)
+        public PatientService(IPatientRepo PatientRepo , IDoctorRepo DoctorRepo)
         {
-            _PateintRepo = PatientRepo;
-        }
-        public PatientResponse AddNewPatient(CreatePatientRequest NewPatient)
-        {
-            // After Validating The Patient (This is the core Service layer purpose)
-            // We gonna add it to the DB using the infrastructure layer (we dont deal with DB stuff here)
-            Patient patient = CreatePatient(NewPatient);
-
-            _PateintRepo.AddNewPatient(patient);
-
-            PatientResponse patientResponse = CreatePatientResponse(patient);
-            return patientResponse;
+            _patientRepo = PatientRepo;
+            _doctorRepo = DoctorRepo;
         }
 
-        public PatientResponse UpdatePatient(UpdatePatientRequest UpdatedPatient , int PatientId)
+        public PatientResponse AddNewPatient(CreatePatientRequest newPatient)
         {
-            if(PatientId <= 0) throw new ArgumentOutOfRangeException("Patient Id Must be > 0");
-            if (UpdatedPatient == null) throw new ArgumentNullException(nameof(UpdatedPatient));
+            IsValidPatient(newPatient);
 
-            Patient CurrentPatient = _PateintRepo.GetPatientById(PatientId);
+            var patient = FromRequest(newPatient);
 
-            if (CurrentPatient == null) throw new KeyNotFoundException("Patient Doesnt Exists !");
+            var createdPatient = _patientRepo.AddNewPatient(patient);
 
-            // After More Business Validation...
-
-            CurrentPatient.PatientId = PatientId;
-            CurrentPatient.FirstName = UpdatedPatient.FirstName;
-            CurrentPatient.LastName = UpdatedPatient.LastName;
-            CurrentPatient.Age = UpdatedPatient.Age;
-            CurrentPatient.Symptoms = UpdatedPatient.Symptoms;
-            CurrentPatient.Medicine = UpdatedPatient.Medicine;
-            CurrentPatient.Diagnostic = UpdatedPatient.Diagnostic;
-            CurrentPatient.DoctorId = UpdatedPatient.DoctorId;
-
-            _PateintRepo.UpdatePatient(CurrentPatient, PatientId);
-
-            PatientResponse patientResponse = CreatePatientResponse(CurrentPatient);
-            return patientResponse;
+            return PatientResponse.FromModel(createdPatient);
         }
 
-        private Patient CreatePatient(CreatePatientRequest patient)
+        public PatientResponse UpdatePatient(UpdatePatientRequest Patient, int PatientId)
         {
-            return new Patient
+            IsValidPatient(Patient);
+
+            var patient = FromRequest(Patient , PatientId);
+
+            var updatedPatient = _patientRepo.UpdatePatient(patient);
+
+            return PatientResponse.FromModel(updatedPatient);
+        }
+
+        public PatientResponse DeletePatientById(int patientId)
+        {
+            var patient = _patientRepo.GetPatientById(patientId);
+
+            if (patient == null) 
+                throw new ArgumentNullException("Patient Does Not Exist");
+
+            _patientRepo.DeletePatient(patient);
+
+            return PatientResponse.FromModel(patient);
+        }
+
+        public List<PatientResponse> GetPatientByDoctorId(int doctorId)
+        {
+            var doctor = _doctorRepo.GetDoctorById(doctorId);
+
+            if (doctor is null) throw new ArgumentNullException("Doctor Does Not Exist !");
+
+            var patients = _patientRepo.GetPatientByDoctor(doctor);
+
+            if (patients is null) return [];
+
+            return PatientResponse.FromModels(patients).ToList();
+        }
+
+        public PagedResult<PatientResponse> GetPatientPage(int page, int pageSize)
+        {
+            page = Math.Max(1, page);
+            pageSize = Math.Clamp(pageSize, 1, 100); // Gives 1 at least - 100 at most
+
+            int totalItems = _patientRepo.GetPatientCount();
+
+            var patients = _patientRepo.GetPatientPage(page, pageSize);
+
+            var patientsResponse = PatientResponse.FromModels(patients);
+
+            var currentPage = PagedResult<PatientResponse>.GetPagedItems(patientsResponse, totalItems, page, pageSize);
+
+            return currentPage;
+        }
+
+        private void IsValidPatient(PatientRequest patientRequest)
+        {
+            if (patientRequest == null) 
+                throw new ArgumentNullException("Invalid Patient Data (null)");
+
+            if (!patientRequest.FirstName.All(char.IsLetter) || !patientRequest.LastName.All(char.IsLetter)) 
+                throw new ArgumentException("Name Must Contain Only Letters");
+
+            if (patientRequest.Age < 0 || patientRequest.Age > 120) 
+                throw new ArgumentException("Invalid Age");
+
+            var doctor = _doctorRepo.GetDoctorById(patientRequest.DoctorId);
+
+            if(doctor == null) 
+                throw new ArgumentNullException("Invalid Doctor (null)");
+        }
+        private Patient FromRequest(PatientRequest patientRequest , int id = 0)
+        {
+            var patient = new Patient
             {
-                PatientId = 1,
-                FirstName = patient.FirstName,
-                LastName = patient.LastName,
-                Age = patient.Age,
-                Symptoms = patient.Symptoms,
-                Medicine = patient.Medicine,
-                Diagnostic = patient.Diagnostic,
-                DoctorId = patient.DoctorId,
-                Appointments = null,
-                CreatedAt = DateTimeOffset.Now,
-                IsDeleted = false
+                FirstName = patientRequest.FirstName,
+                LastName = patientRequest.LastName,
+                Age = patientRequest.Age,
+                Symptoms = patientRequest.Symptoms,
+                Medicine = patientRequest.Medicine,
+                Diagnostic = patientRequest.Diagnostic,
+                DoctorId = patientRequest.DoctorId,
             };
-        }
-        private PatientResponse CreatePatientResponse(Patient patient)
-        {
-            return new PatientResponse
+
+            if(patientRequest is UpdatePatientRequest u)
             {
-                PatientId = patient.PatientId,
-                FirstName = patient.FirstName,
-                LastName = patient.LastName,
-                Age = patient.Age,
-                Symptoms = patient.Symptoms,
-                Medicine = patient.Medicine,
-                Diagnostic = patient.Diagnostic,
-                DoctorId = patient.DoctorId
-            };
+                patient.PatientId = id;
+                if (u.Appointments is not null) patient.Appointments = u.Appointments;
+            }
+            return patient;
         }
     }
 }

@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using ClinicAPI.Models;
+using ClinicAPI.Query;
 using ClinicAPI.Requests;
-using ClinicAPI.Service;
 using ClinicAPI.Responses;
+using ClinicAPI.Service;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers
 {
@@ -52,15 +54,30 @@ namespace ClinicAPI.Controllers
         [HttpPost]
         public IActionResult AddDoctor([FromBody] CreateDoctorRequest NewDoctor)
         {
-            DoctorResponse Doctor = _doctorService.AddNewDoctor(NewDoctor);
-            return Ok(Doctor);
+            try
+            {
+                DoctorResponse Doctor = _doctorService.AddNewDoctor(NewDoctor);
+                return Ok(Doctor);
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            
         }
 
         [HttpPut("{id:int}")]
         public IActionResult UpdateDoctor([FromBody] UpdateDoctorRequest UpdatedDoctor, [FromRoute(Name = "id")] int DoctorId)
         {
-            DoctorResponse Doctor = _doctorService.UpdateDoctor(UpdatedDoctor, DoctorId);
-            return Ok(Doctor);
+            try
+            {
+                DoctorResponse Doctor = _doctorService.UpdateDoctor(UpdatedDoctor, DoctorId);
+                return Ok(Doctor);
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            
         }
     }
 }
