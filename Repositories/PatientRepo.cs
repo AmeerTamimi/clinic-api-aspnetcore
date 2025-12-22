@@ -50,10 +50,11 @@ namespace ClinicAPI.Repositories
             return patientToUpdate;
         }
 
-        public Patient DeletePatient(Patient patient)
+        public bool DeletePatientById(int patientId)
         {
-            patient.IsDeleted = true;
-            return patient;
+            var toDelete = _patients.FirstOrDefault(p => p.PatientId == patientId && !p.IsDeleted)!;
+            toDelete.IsDeleted = true;
+            return true;
         }
 
         public List<Patient> GetPatientByDoctor(Doctor doctor)

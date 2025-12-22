@@ -18,7 +18,7 @@ namespace ClinicAPI.Responses
 
         private DoctorResponse() { }
 
-        public static DoctorResponse FromModel(Doctor doctor)
+        public static DoctorResponse FromModel(Doctor doctor, bool includePatients, bool includeAppointments)
         {
             var doctorResponse = new DoctorResponse();
             doctorResponse.DoctorId = doctor.DoctorId;
@@ -29,11 +29,11 @@ namespace ClinicAPI.Responses
             doctorResponse.YearOfExperience = doctor.YearOfExperience;
             doctorResponse.Phone = doctor.Phone!;
 
-            if (doctor.Patients != null)
+            if (doctor.Patients != null && includePatients)
             {
-                doctorResponse.Patients = doctor.Patients.Select(p => PatientResponse.FromModel(p)).ToList();
+                doctorResponse.Patients = doctor.Patients.Select(p => PatientResponse.FromModel(p , false)).ToList();
             }
-            if (doctor.Appointments != null)
+            if (doctor.Appointments != null && includeAppointments)
             {
                 doctorResponse.Appointments = doctor.Appointments.Select(a => AppointmentResponse.FromModel(a)).ToList();
             }
@@ -41,12 +41,12 @@ namespace ClinicAPI.Responses
             return doctorResponse;
         }
 
-        public static IEnumerable<DoctorResponse>? FromModels(IEnumerable<Doctor>? doctors)
+        public static IEnumerable<DoctorResponse>? FromModels(IEnumerable<Doctor>? doctors, bool includePatients, bool includeAppointments)
         {
             if (doctors == null)
                 return null;
 
-            return doctors.Select(d => FromModel(d));
+            return doctors.Select(d => FromModel(d, includePatients, includeAppointments));
         }
     }
 }

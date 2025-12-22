@@ -15,10 +15,9 @@ namespace ClinicAPI.Responses
         public string? Diagnostic { get; set; }
         public int DoctorId { get; set; }
         public List<AppointmentResponse>? Appointments { get; set; }
-
         private PatientResponse() { }
 
-        public static PatientResponse FromModel(Patient patient)
+        public static PatientResponse FromModel(Patient patient , bool includeAppointments)
         {
             var patientResponse = new PatientResponse();
             patientResponse.PatientId = patient.PatientId;
@@ -29,21 +28,23 @@ namespace ClinicAPI.Responses
             patientResponse.Medicine = patient.Medicine;
             patientResponse.Diagnostic = patient.Diagnostic;
             patientResponse.DoctorId = patient.DoctorId;
-
-            if(patient.Appointments != null)
+            
+            if(patient.Appointments != null && includeAppointments)
             {
-                patientResponse.Appointments =patient.Appointments.Select(a => AppointmentResponse.FromModel(a)).ToList();
+                patientResponse.Appointments = patient.Appointments.Where(a => a.PatientId == patientResponse.PatientId)
+                                                                   .Select(a => AppointmentResponse.FromModel(a))
+                                                                   .ToList();
             }
 
             return patientResponse;
         }
 
-        public static IEnumerable<PatientResponse>? FromModels(IEnumerable<Patient>? patients)
+        public static IEnumerable<PatientResponse>? FromModels(IEnumerable<Patient>? patients, bool includeAppointments)
         {
             if (patients == null)
                 return null;
 
-            return patients.Select(p => FromModel(p));
+            return patients.Select(p => FromModel(p , includeAppointments));
         }
     }
 }

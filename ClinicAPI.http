@@ -1,85 +1,42 @@
-@baseUrl = http://localhost:5234
+@baseUrl = https://localhost:5234
 
 ###
 GET {{baseUrl}}/route-table
 
-### Adding new Patient
+
+###
+GET {{baseUrl}}/patients?pageSize=10
+
+###
+GET {{baseUrl}}/doctors/2/patients
+
+###
 POST {{baseUrl}}/patients
-Content-Type: application/json
-Accept: application/json
+Content-type: application/json
 
 {
-  "FirstName" : "Ameer",
-  "LastName" : "Ameer",
-  "Age" : 20 , 
-  "Symptoms" : "Nothing-Alhamdullah",
-  "Medicine" : "idk",
-  "Diagnostic" : "notin",
-  "DoctorId" : 11
-}
-
-### Updating Existing Patient
-PUT {{baseUrl}}/patients/10
-Content-Type: application/json
-Accept: application/json
-
-{  "patientId": 0,
-  "FirstName" : "Ameer",
-  "LastName" : "Ameer",
-  "Age" : 20 , 
-  "Symptoms" : "Nothing-Alhamdullah",
-  "Medicine" : "idk",
-  "Diagnostic" : "notin",
-  "DoctorId" : 11
-}
-
-### Adding new Doctor
-POST {{baseUrl}}/doctors
-Content-Type: application/json
-Accept: application/json
-
-{
-  "FirstName": "Ahmad",
-  "LastName": "Salameh",
-  "Specialist": "Cardiology",
-  "Age": 40,
-  "YearOfExperience": 12
-}
-
-### Updating Existing Doctor
-PUT {{baseUrl}}/doctors/10
-Content-Type: application/json
-Accept: application/json
-
-{
-  "FirstName": "Ahmad",
-  "LastName": "Salameh",
-  "Specialist": "Cardiology",
-  "Age": 41,
-  "YearOfExperience": 13
-}
-
-### Adding new Appointment
-POST {{baseUrl}}/appointments
-Content-Type: application/json
-Accept: application/json
-
-{
-  "PatientId": 5,
-  "DoctorId": 10,
-  "Date": "2025-12-20"
-}
-
-### Updating Existing Appointment
-PUT {{baseUrl}}/appointments/10
-Content-Type: application/json
-Accept: application/json
-
-{
-  "PatientId": 5,
-  "DoctorId": 10,
-  "Date": "2025-12-22"
+    "firstName": "Ibrahim",
+    "lastName": "Shahin",
+    "age": 0,
+    "symptoms": "Fever",
+    "medicine": "Ibuprofen",
+    "diagnostic": "Viral infection",
+    "doctorId": 11
 }
 
 ###
-GET {{baseUrl}}/patients?page=12
+PUT {{baseUrl}}/patients/0
+Content-type: application/json
+
+{
+  "firstName": "Ibrahimmmm",
+    "lastName": "Shahin",
+    "age": 0,
+    "symptoms": "Fever",
+    "medicine": "Ibuprofen",
+    "diagnostic": "Viral infection",
+    "doctorId": 5
+}
+
+###
+DELETE {{baseUrl}}/patients/10

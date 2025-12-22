@@ -1,8 +1,7 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ClinicAPI.Requests;
-using ClinicAPI.Service;
+﻿using ClinicAPI.Requests;
 using ClinicAPI.Responses;
-using ClinicAPI.Query;
+using ClinicAPI.Service;
+using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers
 {
@@ -11,55 +10,74 @@ namespace ClinicAPI.Controllers
     public class AppointmentsController(IAppointmentService _appointmentService) : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetAll()
+        public IActionResult GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 3)
         {
-            return Ok(new[]
+            var appointments = _appointmentService.GetAppointmentPage(page, pageSize);
+            return Ok(appointments);
+        }
+
+        [HttpGet("{appointmentId:int}")]
+        public IActionResult GetById([FromRoute] int appointmentId)
+        {
+            try
             {
-                "Appointment #1",
-                "Appointment #2"
-            });
-        }
-
-        [HttpGet("{id:int}")]
-        public IActionResult GetById([FromRoute(Name = "id")] int appointmentId)
-        {
-            return Ok($"Appointment #{appointmentId}");
-        }
-
-        [HttpGet("search")]
-        public IActionResult GetAppointments([FromQuery] AppointmentSearchRequest request)
-        {
-            return Ok(request);
+                var appointment = _appointmentService.GetAppointmentById(appointmentId);
+                return Ok(appointment);
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound(e.Message);
+            }
         }
 
         [HttpPost]
-        public IActionResult AddAppointment([FromBody] CreateAppointmentRequest NewAppointment)
+        public IActionResult AddAppointment([FromBody] CreateAppointmentRequest createRequest)
         {
             try
             {
-                AppointmentResponse Appointment = _appointmentService.AddNewAppointment(NewAppointment);
-                return Ok(Appointment);
+                var appointment = _appointmentService.AddNewAppointment(createRequest);
+                return Ok(appointment);
             }
-            catch (Exception e)
+            catch (ArgumentNullException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (ArgumentException e)
             {
                 return BadRequest(e.Message);
             }
-            
         }
 
         [HttpPut("{id:int}")]
-        public IActionResult UpdateAppointment([FromBody] UpdateAppointmentRequest UpdatedAppointment, [FromRoute(Name = "id")] int AppointmentId)
+        public IActionResult UpdateAppointment([FromBody] UpdateAppointmentRequest updateRequest, [FromRoute(Name = "id")] int appointmentId)
         {
             try
             {
-                AppointmentResponse Appointment = _appointmentService.UpdateAppointment(UpdatedAppointment, AppointmentId);
-                return Ok(Appointment);
+                _appointmentService.UpdateAppointment(updateRequest, appointmentId);
+                return NoContent();
             }
-            catch (Exception e)
+            catch (ArgumentNullException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (ArgumentException e)
             {
                 return BadRequest(e.Message);
             }
-            
+        }
+
+        [HttpDelete("{appointmentId:int}")]
+        public IActionResult DeleteAppointmentById([FromRoute] int appointmentId)
+        {
+            try
+            {
+                var appointment = _appointmentService.DeleteAppointmentById(appointmentId);
+                return Ok(appointment);
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound(e.Message);
+            }
         }
     }
 }

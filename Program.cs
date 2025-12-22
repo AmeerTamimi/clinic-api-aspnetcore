@@ -13,6 +13,7 @@ builder.Services.AddOptions<ClinicSettings>()
 
 builder.Services.AddControllers();
 
+
 // Service/Business Layer Services
 builder.Services.AddBusinessServices();
 
@@ -96,6 +97,12 @@ app.MapGet("/route-table", (IServiceProvider sp) =>
 
     return Results.Ok(endpoints);
 });
+
+app.MapGet("/__whoami", () => new {
+    App = AppDomain.CurrentDomain.FriendlyName,
+    Dir = AppContext.BaseDirectory
+});
+
 
 app.Run();
 

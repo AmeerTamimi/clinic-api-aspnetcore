@@ -1,101 +1,116 @@
-﻿using ClinicAPI.Requests;
+﻿using ClinicAPI.Models;
 using ClinicAPI.Repositories;
+using ClinicAPI.Requests;
 using ClinicAPI.Responses;
-using ClinicAPI.Models;
 
 namespace ClinicAPI.Service
 {
     public class PatientService : IPatientService
     {
         private readonly IPatientRepo _patientRepo;
-        private readonly IDoctorRepo _doctorRepo;
+        private readonly IAppointmentRepo _appointmentRepo;
 
-        public PatientService(IPatientRepo PatientRepo , IDoctorRepo DoctorRepo)
+        public PatientService(IPatientRepo patientRepo, IAppointmentRepo appointmentRepo)
         {
-            _patientRepo = PatientRepo;
-            _doctorRepo = DoctorRepo;
+            _patientRepo = patientRepo;
+            _appointmentRepo = appointmentRepo;
         }
 
-        public PatientResponse AddNewPatient(CreatePatientRequest newPatient)
+        public PatientResponse GetPatientById(int patientId)
         {
-            IsValidPatient(newPatient);
+            var patient = _patientRepo.GetPatientById(patientId);
 
-            var patient = FromRequest(newPatient);
+            if (patient is null)
+                throw new ArgumentNullException("Patient Not Found");
+
+            return PatientResponse.FromModel(patient, false);
+        }
+
+        public PatientResponse AddNewPatient(CreatePatientRequest NewPatient)
+        {
+            IsValidPatient(NewPatient);
+
+            var patient = FromRequest(NewPatient);
 
             var createdPatient = _patientRepo.AddNewPatient(patient);
 
-            return PatientResponse.FromModel(createdPatient);
+            return PatientResponse.FromModel(createdPatient, false);
         }
 
         public PatientResponse UpdatePatient(UpdatePatientRequest Patient, int PatientId)
         {
-            IsValidPatient(Patient);
+            IsValidPatient(Patient, PatientId);
 
-            var patient = FromRequest(Patient , PatientId);
+            var patient = FromRequest(Patient, PatientId);
 
             var updatedPatient = _patientRepo.UpdatePatient(patient);
 
-            return PatientResponse.FromModel(updatedPatient);
+            return PatientResponse.FromModel(updatedPatient, true);
         }
 
-        public PatientResponse DeletePatientById(int patientId)
+        public PatientResponse DeletePatient(int patientId)
         {
             var patient = _patientRepo.GetPatientById(patientId);
 
-            if (patient == null) 
+            if (patient is null)
                 throw new ArgumentNullException("Patient Does Not Exist");
 
-            _patientRepo.DeletePatient(patient);
+            _patientRepo.DeletePatientById(patientId);
 
-            return PatientResponse.FromModel(patient);
+            return PatientResponse.FromModel(patient, true);
         }
 
-        public List<PatientResponse> GetPatientByDoctorId(int doctorId)
+        public List<AppointmentResponse> GetAppointmentByPatientId(int patientId)
         {
-            var doctor = _doctorRepo.GetDoctorById(doctorId);
+            var patient = _patientRepo.GetPatientById(patientId);
 
-            if (doctor is null) throw new ArgumentNullException("Doctor Does Not Exist !");
+            if (patient is null)
+                throw new ArgumentNullException("Patient Does Not Exist");
 
-            var patients = _patientRepo.GetPatientByDoctor(doctor);
+            var appointments = _appointmentRepo.GetAppointmentByPatientId(patientId);
 
-            if (patients is null) return [];
+            if (appointments is null)
+                return [];
 
-            return PatientResponse.FromModels(patients).ToList();
+            patient.Appointments = appointments.ToList();
+
+            return AppointmentResponse.FromModels(patient.Appointments)!.ToList();
         }
 
-        public PagedResult<PatientResponse> GetPatientPage(int page, int pageSize)
+        public PagedResult<PatientResponse> GetPatientPage(int page, int pageSize, bool includeAppointments)
         {
             page = Math.Max(1, page);
-            pageSize = Math.Clamp(pageSize, 1, 100); // Gives 1 at least - 100 at most
+            pageSize = Math.Clamp(pageSize, 1, 100);
 
             int totalItems = _patientRepo.GetPatientCount();
 
             var patients = _patientRepo.GetPatientPage(page, pageSize);
 
-            var patientsResponse = PatientResponse.FromModels(patients);
+            var patientsResponse = PatientResponse.FromModels(patients, includeAppointments);
 
-            var currentPage = PagedResult<PatientResponse>.GetPagedItems(patientsResponse, totalItems, page, pageSize);
-
-            return currentPage;
+            return PagedResult<PatientResponse>.GetPagedItems(patientsResponse, totalItems, page, pageSize);
         }
 
-        private void IsValidPatient(PatientRequest patientRequest)
+        private void IsValidPatient(PatientRequest patientRequest, int patientId = 0)
         {
-            if (patientRequest == null) 
-                throw new ArgumentNullException("Invalid Patient Data (null)");
+            if (patientId > 0)
+            {
+                var patient = _patientRepo.GetPatientById(patientId);
+                if (patient is null)
+                    throw new ArgumentNullException("Patient Does Not Exist");
+            }
 
-            if (!patientRequest.FirstName.All(char.IsLetter) || !patientRequest.LastName.All(char.IsLetter)) 
+            if (patientRequest is null)
+                throw new ArgumentNullException("Invalid Patient Data");
+
+            if (!patientRequest.FirstName.All(char.IsLetter) || !patientRequest.LastName.All(char.IsLetter))
                 throw new ArgumentException("Name Must Contain Only Letters");
 
-            if (patientRequest.Age < 0 || patientRequest.Age > 120) 
+            if (patientRequest.Age < 0 || patientRequest.Age > 120)
                 throw new ArgumentException("Invalid Age");
-
-            var doctor = _doctorRepo.GetDoctorById(patientRequest.DoctorId);
-
-            if(doctor == null) 
-                throw new ArgumentNullException("Invalid Doctor (null)");
         }
-        private Patient FromRequest(PatientRequest patientRequest , int id = 0)
+
+        private Patient FromRequest(PatientRequest patientRequest, int id = 0)
         {
             var patient = new Patient
             {
@@ -105,14 +120,12 @@ namespace ClinicAPI.Service
                 Symptoms = patientRequest.Symptoms,
                 Medicine = patientRequest.Medicine,
                 Diagnostic = patientRequest.Diagnostic,
-                DoctorId = patientRequest.DoctorId,
+                DoctorId = patientRequest.DoctorId
             };
 
-            if(patientRequest is UpdatePatientRequest u)
-            {
+            if (patientRequest is UpdatePatientRequest)
                 patient.PatientId = id;
-                if (u.Appointments is not null) patient.Appointments = u.Appointments;
-            }
+
             return patient;
         }
     }

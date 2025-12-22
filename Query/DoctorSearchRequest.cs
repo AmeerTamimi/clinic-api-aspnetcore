@@ -16,5 +16,7 @@
         // Filtering
         public int? MinAge { get; set; }
         public int? MaxAge { get; set; }
+        public bool IncludeAppointments { get; set; } = false;
+        public bool IncludePatients { get; set; } = false;
     }
 }

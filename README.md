@@ -1,76 +1,80 @@
 # clinic-api-aspnetcore
 
-A small ASP.NET Core Web API for a clinic system:
-Patients, Doctors, Appointments.
+ASP.NET Core Web API for a simple clinic system:
+**Patients**, **Doctors**, **Appointments**.
 
-Built while following **Eng. Issam's ASP.NET Core Web API course**, and extended with my own structure
-(DI/IoC, repositories, services, controllers, model binding, DTOs, etc.).
+Built while following **Eng. Issam's ASP.NET Core Web API course**, then extended with my own structure
+(controllers/services/repos, model binding, DTOs, pagination, DI grouping).
 
 ## What’s implemented
 
-- Controllers for **Patients**, **Doctors**, **Appointments**
-- Domain models: Patient, Doctor, Appointment
-- Repository layer (`I*Repo` + `*Repo`) using **in-memory seeded fake data** (for learning / no real DB yet)
-- Service layer (`I*Service` + `*Service`) for orchestration + business flow
-- Request/Response contracts:
-  - `Requests/` for input DTOs (create/update)
-  - `Query/` for search/query DTOs
-  - `Responses/` for output DTOs
-- Response DTO mapping via `FromModel(...)` methods
+- Controllers: `Patients`, `Doctors`, `Appointments`
+- Domain models: `Patient`, `Doctor`, `Appointment`
+- Repository layer (`I*Repo` + `*Repo`) using **in-memory seeded data** (no real DB yet)
+- Service layer (`I*Service` + `*Service`) for business flow + validation
+- DTOs:
+  - `Requests/` for create/update contracts
+  - `Query/` for query contracts
+  - `Responses/` for output DTOs + mapping methods
 - Pagination helper: `PagedResult<T>`
 - Helper endpoint: `GET /route-table`
+- HTTP test file: `ClinicAPI.http`
 
 > Note: `ClinicDbContext` exists under `Persistence/`, but current repos use in-memory data for now.
 
-## Model Binding Used
+## Model Binding
 
-- **Route params** (identity): `/patients/{id:int}`, `/doctors/{id:int}`, `/appointments/{id:int}`
-- **Query string** (search/list): `/patients/search`, `/doctors/search`, `/appointments/search`
-- **Body binding** (create/update): JSON `application/json`
+- **Route params**: `/{id:int}`
+- **Query string**: `?page=&pageSize=&includeAppointments=`
+- **Body**: JSON `application/json`
 
 ## Pagination
 
-Paging is supported via `PagedResult<T>` and list/search endpoints can use query params like:
+List endpoints support:
 - `page` (default 1)
-- `pageSize` (clamped to a reasonable max)
+- `pageSize` (clamped)
+- `includeAppointments` (patients + doctor patients)
 
 Example:
-- `GET /patients?page=1&pageSize=10`
+- `GET /patients?page=1&pageSize=10&includeAppointments=false`
 
 ## Endpoints
 
 ### Patients
-- `GET /patients`
-- `GET /patients/{id:int}`
-- `GET /patients/search`
+- `GET /patients?page=&pageSize=&includeAppointments=`
+- `GET /patients/{patientId:int}`
+- `GET /patients/{patientId:int}/appointments`
 - `POST /patients`
-- `PUT /patients/{id:int}`
+- `PUT /patients/{patientId:int}`
+- `DELETE /patients/{patientId:int}`
 
 ### Doctors
-- `GET /doctors`
-- `GET /doctors/{id:int}`
-- `GET /doctors/search`
+- `GET /doctors?page=&pageSize=`
+- `GET /doctors/{doctorId:int}`
+- `GET /doctors/{doctorId:int}/patients?includeAppointments=`
+- `GET /doctors/{doctorId:int}/appointments`
 - `POST /doctors`
-- `PUT /doctors/{id:int}`
+- `PUT /doctors/{doctorId:int}`
+- `DELETE /doctors/{doctorId:int}`
 
 ### Appointments
-- `GET /appointments`
-- `GET /appointments/{id:int}`
-- `GET /appointments/search`
+- `GET /appointments?page=&pageSize=`
+- `GET /appointments/{appointmentId:int}`
 - `POST /appointments`
-- `PUT /appointments/{id:int}`
+- `PUT /appointments/{appointmentId:int}`
+- `DELETE /appointments/{appointmentId:int}`
 
 ## Project Structure
 
-- `Controllers/` — API endpoints (routing + actions)
-- `Models/` — domain models (Patient, Doctor, Appointment)
-- `Persistence/` — `ClinicDbContext` (placeholder for later real DB work)
-- `Repositories/` — repository interfaces and implementations (currently in-memory)
-- `Service/` — business flow + orchestration
-- `Requests/` — create/update request DTOs (base request included)
-- `Query/` — search/query DTOs
+- `Controllers/` — endpoints
+- `Models/` — domain models
+- `Persistence/` — `ClinicDbContext` (placeholder for later DB)
+- `Repositories/` — repo interfaces + in-memory implementations
+- `Service/` — business logic + orchestration
+- `Requests/` — create/update DTOs
+- `Query/` — query DTOs
 - `Responses/` — response DTOs + `PagedResult<T>`
-- `GroupedRegistrations/` — grouped DI registrations (Business/Infrastructure)
+- `GroupedRegistrations/` — grouped DI registrations
 - `Program.cs` — composition root (DI + middleware + routing)
 
 ## Run

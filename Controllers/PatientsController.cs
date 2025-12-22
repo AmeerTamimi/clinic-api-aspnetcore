@@ -1,69 +1,98 @@
-﻿using ClinicAPI.Models;
-using ClinicAPI.Query;
+﻿using ClinicAPI.Query;
 using ClinicAPI.Requests;
 using ClinicAPI.Responses;
 using ClinicAPI.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicAPI.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    // we Inject Patient Service here (We use it for business logic , so controllers dont get fat)
     public class PatientsController(IPatientService _patientService) : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetAll([FromQuery] int page = 1 , [FromQuery] int pageSize = 3)
+        public IActionResult GetAll([FromQuery] PatientSearchRequest query)
         {
-            var patients = _patientService.GetPatientPage(page, pageSize);
+            var patients = _patientService.GetPatientPage(query.Page, query.PageSize, query.IncludeAppointments);
             return Ok(patients);
         }
 
-        // Route Parameter Endpoint
-
-        [HttpGet("{id:int}")]
-        public IActionResult GetById([FromRoute(Name="id")] int patientId)
+        [HttpGet("{patientId:int}")]
+        public IActionResult GetById([FromRoute] int patientId)
         {
-            return Ok($"Patient #{patientId}");
+            try
+            {
+                var patient = _patientService.GetPatientById(patientId);
+                return Ok(patient);
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound(e.Message);
+            }
         }
 
-        // Query String Endpoint
-        [HttpGet("search")]
-        public IActionResult GetPatients([FromQuery] PatientSearchRequest request)
+        [HttpGet("{patientId:int}/appointments")]
+        public IActionResult GetAppointments([FromRoute] int patientId)
         {
-            return Ok(request);
+            try
+            {
+                var appointments = _patientService.GetAppointmentByPatientId(patientId);
+                return Ok(appointments);
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound(e.Message);
+            }
         }
 
-        // Adding Patient Endpoint
         [HttpPost]
-        public IActionResult AddPatient([FromBody] CreatePatientRequest NewPatient)
+        public IActionResult AddPatient([FromBody] CreatePatientRequest createRequest)
         {
             try
             {
-                PatientResponse Patient = _patientService.AddNewPatient(NewPatient);
-                return Ok(Patient); // result will be as a json
+                var patient = _patientService.AddNewPatient(createRequest);
+                return Ok(patient);
             }
-            catch (Exception e)
+            catch (ArgumentNullException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (ArgumentException e)
             {
                 return BadRequest(e.Message);
             }
-           
         }
 
-        // Updating Patient Endpoint
         [HttpPut("{id:int}")]
-        public IActionResult UpdatePatient([FromBody] UpdatePatientRequest UpdatedPatient ,[FromRoute(Name="id")] int PatientId)
+        public IActionResult UpdatePatient([FromBody] UpdatePatientRequest updateRequest, [FromRoute(Name = "id")] int patientId)
         {
             try
             {
-                PatientResponse Patient = _patientService.UpdatePatient(UpdatedPatient, PatientId);
-                return Ok(Patient);
-            }catch(Exception e)
+                _patientService.UpdatePatient(updateRequest, patientId);
+                return NoContent();
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound(e.Message);
+            }
+            catch (ArgumentException e)
             {
                 return BadRequest(e.Message);
             }
-            
+        }
+
+        [HttpDelete("{patientId:int}")]
+        public IActionResult DeletePatientById([FromRoute] int patientId)
+        {
+            try
+            {
+                var patient = _patientService.DeletePatient(patientId);
+                return Ok(patient);
+            }
+            catch (ArgumentNullException e)
+            {
+                return NotFound(e.Message);
+            }
         }
     }
 }

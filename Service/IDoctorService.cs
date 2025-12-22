@@ -1,11 +1,17 @@
-﻿using ClinicAPI.Requests;
+﻿using ClinicAPI.Query;
+using ClinicAPI.Requests;
 using ClinicAPI.Responses;
 
 namespace ClinicAPI.Service
 {
     public interface IDoctorService
     {
-        DoctorResponse AddNewDoctor(CreateDoctorRequest NewDoctor);
-        DoctorResponse UpdateDoctor(UpdateDoctorRequest Doctor , int DoctorId);
+        DoctorResponse GetDoctorById(int doctorId);
+        DoctorResponse AddNewDoctor(CreateDoctorRequest newDoctor);
+        DoctorResponse UpdateDoctor(UpdateDoctorRequest doctor, int doctorId);
+        DoctorResponse DeleteDoctorById(int doctorId);
+        List<PatientResponse> GetDoctorPatients(int doctorId, bool includeAppointments);
+        List<AppointmentResponse> GetDoctorAppointments(int doctorId);
+        PagedResult<DoctorResponse> GetDoctorPage(DoctorSearchRequest query);
     }
 }

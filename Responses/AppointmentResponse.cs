@@ -14,12 +14,14 @@ namespace ClinicAPI.Responses
 
         public static AppointmentResponse FromModel(Appointment appointment)
         {
-            var appointmentResponse = new AppointmentResponse();
-            appointmentResponse.AppointmentId = appointment.AppointmentId;
-            appointmentResponse.PatientId = appointment.PatientId;
-            appointmentResponse.DoctorId = appointment.DoctorId;
-            appointmentResponse.Date = appointment.Date;
-            appointmentResponse.IsDone = appointment.IsDone;
+            var appointmentResponse = new AppointmentResponse
+            {
+                AppointmentId = appointment.AppointmentId,
+                PatientId = appointment.PatientId,
+                DoctorId = appointment.DoctorId,
+                Date = appointment.Date,
+                IsDone = appointment.IsDone
+            };
 
             return appointmentResponse;
         }

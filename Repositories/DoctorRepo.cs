@@ -23,7 +23,6 @@ namespace ClinicAPI.Repositories
         {
             return _doctors.FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted)!;
         }
-
         public Doctor AddNewDoctor(Doctor newDoctor)
         {
             int newId = _doctors.Count == 0 ? 1 : _doctors.Max(d => d.DoctorId) + 1;
@@ -46,19 +45,16 @@ namespace ClinicAPI.Repositories
 
             return toUpdate;
         }
-
         public bool DeleteDoctorById(int doctorId)
         {
             var toDelete = _doctors.FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted)!;
             toDelete.IsDeleted = true;
             return true;
         } 
-
         public int GetDoctorCount()
         {
             return _doctors.Count(d => !d.IsDeleted);
         }
-
         public List<Doctor> GetDoctorPage(int page, int pageSize)
         {
             return _doctors
@@ -67,6 +63,13 @@ namespace ClinicAPI.Repositories
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
+        }
+
+        public List<Appointment> GetAppointment(int doctorId)
+        {
+
+
+            return [];
         }
     }
 }
