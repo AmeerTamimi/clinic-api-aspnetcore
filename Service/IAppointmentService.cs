@@ -11,6 +11,6 @@ namespace ClinicAPI.Service
         AppointmentResponse AddNewAppointment(CreateAppointmentRequest newAppointment);
         void UpdateAppointment(UpdateAppointmentRequest appointment , int appointmentId);
         AppointmentResponse DeleteAppointmentById(int appointmentId);
-        PagedResult<AppointmentResponse> GetAppointmentPage(int page , int pageSize);
+        PagedResult<AppointmentResponse> GetAppointmentPage(AppointmentQuery query);
     }
 }

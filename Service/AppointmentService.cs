@@ -1,5 +1,6 @@
 ﻿using ClinicAPI.CustomExceptions;
 using ClinicAPI.Models;
+using ClinicAPI.Query;
 using ClinicAPI.Repositories;
 using ClinicAPI.Requests;
 using ClinicAPI.Responses;
@@ -66,14 +67,17 @@ namespace ClinicAPI.Service
             return AppointmentResponse.FromModel(appointment);
         }
 
-        public PagedResult<AppointmentResponse> GetAppointmentPage(int page, int pageSize)
+        public PagedResult<AppointmentResponse> GetAppointmentPage(AppointmentQuery query)
         {
+            int page = query.Page;
+            int pageSize = query.PageSize;
+
             page = Math.Max(page, 1);
             pageSize = Math.Clamp(pageSize, 3, 100);
 
             var items = _appointmentRepo.GetAppointmentPage(page, pageSize);
 
-            var itemsResponse = AppointmentResponse.FromModels(items);
+            var itemsResponse = AppointmentResponse.FromModels(items , query);
 
             var totalItems = _appointmentRepo.GetAppointmentCount();
 

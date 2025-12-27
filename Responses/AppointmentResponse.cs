@@ -1,4 +1,5 @@
 ﻿using ClinicAPI.Models;
+using ClinicAPI.Query;
 
 namespace ClinicAPI.Responses
 {
@@ -32,7 +33,7 @@ namespace ClinicAPI.Responses
             return appointmentResponse;
         }
 
-        public static IEnumerable<AppointmentResponse>? FromModels(IEnumerable<Appointment>? appointments)
+        public static IEnumerable<AppointmentResponse>? FromModels(IEnumerable<Appointment>? appointments , AppointmentQuery query)
         {
             if (appointments == null)
                 return null;

@@ -1,4 +1,5 @@
-﻿using ClinicAPI.Requests;
+﻿using ClinicAPI.Query;
+using ClinicAPI.Requests;
 using ClinicAPI.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,9 +10,9 @@ namespace ClinicAPI.Controllers
     public class AppointmentsController(IAppointmentService _appointmentService) : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetAll([FromQuery] int page = 1, [FromQuery] int pageSize = 3)
+        public IActionResult GetAll([FromQuery] AppointmentQuery query)
         {
-            var appointments = _appointmentService.GetAppointmentPage(page, pageSize);
+            var appointments = _appointmentService.GetAppointmentPage(query);
 
             return Ok(appointments);
         }

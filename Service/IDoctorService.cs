@@ -6,12 +6,12 @@ namespace ClinicAPI.Service
 {
     public interface IDoctorService
     {
-        DoctorResponse GetDoctorById(int doctorId);
+        DoctorResponse GetDoctorById(int doctorId , DoctorQuery query);
         DoctorResponse AddNewDoctor(CreateDoctorRequest newDoctor);
         void UpdateDoctor(UpdateDoctorRequest doctor, int doctorId);
         DoctorResponse DeleteDoctorById(int doctorId);
-        List<PatientResponse> GetDoctorPatients(int doctorId, bool includeAppointments);
-        List<AppointmentResponse> GetDoctorAppointments(int doctorId);
-        PagedResult<DoctorResponse> GetDoctorPage(DoctorSearchRequest query);
+        List<PatientResponse> GetDoctorPatients(int doctorId, PatientQuery query);
+        List<AppointmentResponse> GetDoctorAppointments(int doctorId, AppointmentQuery query);
+        PagedResult<DoctorResponse> GetDoctorPage(DoctorQuery query);
     }
 }

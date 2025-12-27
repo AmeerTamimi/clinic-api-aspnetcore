@@ -3,6 +3,7 @@ using ClinicAPI.Requests;
 using ClinicAPI.Responses;
 using ClinicAPI.CustomExceptions;
 using ClinicAPI.Repositories;
+using ClinicAPI.Query;
 
 namespace ClinicAPI.Service
 {
@@ -17,14 +18,14 @@ namespace ClinicAPI.Service
             _appointmentRepo = appointmentRepo;
         }
 
-        public PatientResponse GetPatientById(int patientId)
+        public PatientResponse GetPatientById(int patientId , PatientQuery query)
         {
             var patient = _patientRepo.GetPatientById(patientId);
 
             if (patient is null)
                 throw new NotFoundException("Patient Not Found");
 
-            return PatientResponse.FromModel(patient, false);
+            return PatientResponse.FromModel(patient, query.IncludeAppointments);
         }
 
         public PatientResponse AddNewPatient(CreatePatientRequest patientRequest)
@@ -66,7 +67,7 @@ namespace ClinicAPI.Service
             return PatientResponse.FromModel(patient, true);
         }
 
-        public List<AppointmentResponse> GetAppointmentByPatientId(int patientId)
+        public List<AppointmentResponse> GetAppointmentByPatientId(int patientId , AppointmentQuery query)
         {
             var patient = _patientRepo.GetPatientById(patientId);
 
@@ -78,13 +79,16 @@ namespace ClinicAPI.Service
             if (appointments is null)
                 return [];
 
-            patient.Appointments = appointments.ToList();
+            patient.PatientAppointments = appointments.ToList();
 
-            return AppointmentResponse.FromModels(patient.Appointments)!.ToList();
+            return AppointmentResponse.FromModels(patient.PatientAppointments , query)!.ToList();
         }
 
-        public PagedResult<PatientResponse> GetPatientPage(int page, int pageSize, bool includeAppointments)
+        public PagedResult<PatientResponse> GetPatientPage(PatientQuery query)
         {
+            int page = query.Page;
+            int pageSize = query.PageSize;
+
             page = Math.Max(1, page);
             pageSize = Math.Clamp(pageSize, 1, 100);
 
@@ -92,7 +96,7 @@ namespace ClinicAPI.Service
 
             var patients = _patientRepo.GetPatientPage(page, pageSize);
 
-            var patientsResponse = PatientResponse.FromModels(patients, includeAppointments);
+            var patientsResponse = PatientResponse.FromModels(patients, query);
 
             return PagedResult<PatientResponse>.GetPagedItems(patientsResponse, totalItems, page, pageSize);
         }

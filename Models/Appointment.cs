@@ -10,6 +10,8 @@
         public string? Medicine { get; set; }
         public string? Diagnostic { get; set; }
         public DateTimeOffset Date { get; set; }
+        public Patient Patient { get; set; }
+        public Doctor Doctor { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public bool IsDeleted { get; set; }
     }

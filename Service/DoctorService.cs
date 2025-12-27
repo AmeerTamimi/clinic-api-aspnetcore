@@ -20,14 +20,14 @@ namespace ClinicAPI.Service
             _appointmentRepo = appointmentRepo;
         }
 
-        public DoctorResponse GetDoctorById(int doctorId)
+        public DoctorResponse GetDoctorById(int doctorId , DoctorQuery query)
         {
             var doctor = _doctorRepo.GetDoctorById(doctorId);
 
             if (doctor is null)
                 throw new NotFoundException("Doctor Does Not Exist");
 
-            return DoctorResponse.FromModel(doctor, false, false);
+            return DoctorResponse.FromModel(doctor, query.IncludePatients, query.IncludeAppointments);
         }
 
         public DoctorResponse AddNewDoctor(CreateDoctorRequest newDoctor)
@@ -62,7 +62,7 @@ namespace ClinicAPI.Service
             return DoctorResponse.FromModel(doctor, true, true);
         }
 
-        public List<PatientResponse> GetDoctorPatients(int doctorId, bool includeAppointments)
+        public List<PatientResponse> GetDoctorPatients(int doctorId, PatientQuery query)
         {
             var doctor = _doctorRepo.GetDoctorById(doctorId);
 
@@ -74,10 +74,10 @@ namespace ClinicAPI.Service
             if (patients is null)
                 return [];
 
-            return PatientResponse.FromModels(patients, includeAppointments)!.ToList();
+            return PatientResponse.FromModels(patients, query)!.ToList();
         }
 
-        public List<AppointmentResponse> GetDoctorAppointments(int doctorId)
+        public List<AppointmentResponse> GetDoctorAppointments(int doctorId , AppointmentQuery query)
         {
             var doctor = _doctorRepo.GetDoctorById(doctorId);
 
@@ -89,17 +89,17 @@ namespace ClinicAPI.Service
             if (appointments is null)
                 return [];
 
-            return AppointmentResponse.FromModels(appointments)!.ToList();
+            return AppointmentResponse.FromModels(appointments , query)!.ToList();
         }
 
-        public PagedResult<DoctorResponse> GetDoctorPage(DoctorSearchRequest query)
+        public PagedResult<DoctorResponse> GetDoctorPage(DoctorQuery query)
         {
             int page = Math.Max(query.Page, 1);
             int pageSize = Math.Clamp(query.PageSize, 3, 100);
 
             var doctorList = _doctorRepo.GetDoctorPage(page, pageSize);
 
-            var doctorResponseList = DoctorResponse.FromModels(doctorList, true, true);
+            var doctorResponseList = DoctorResponse.FromModels(doctorList,query);
 
             return PagedResult<DoctorResponse>.GetPagedItems(doctorResponseList, doctorList.Count(), page, pageSize);
         }

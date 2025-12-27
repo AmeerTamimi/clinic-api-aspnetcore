@@ -8,7 +8,7 @@
         public int Age { get; set; }
         public int DoctorId { get; set; }
         public Doctor? Doctor { get; set; }
-        public List<Appointment>? Appointments { get; set; }
+        public List<Appointment>? PatientAppointments { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public bool IsDeleted { get; set; }
 

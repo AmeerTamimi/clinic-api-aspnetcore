@@ -4,13 +4,13 @@
 GET {{baseUrl}}/route-table
 
 ###
-GET {{baseUrl}}/patients?page=2&pageSize=10&includeAppointments=false
+GET {{baseUrl}}/patients?page=2&pageSize=5&includeAppointments=false
 
 ###
 GET {{baseUrl}}/patients?page=1&pageSize=10&includeAppointments=true
 
 ###
-GET {{baseUrl}}/patients/10
+GET {{baseUrl}}/patients/10?includeAppointments=true
 
 ###
 GET {{baseUrl}}/patients/10/appointments
@@ -32,7 +32,7 @@ Content-Type: application/json
 
 {
   "firstName": "Ibrahim",
-  "lastName": "Shahin",
+  "lastName": "Hammouda",
   "age": 21,
   "symptoms": "headache",
   "medicine": "anything",
@@ -41,13 +41,13 @@ Content-Type: application/json
 }
 
 ###
-DELETE {{baseUrl}}/patients/10
+DELETE {{baseUrl}}/patients/12
 
 ###
-GET {{baseUrl}}/doctors?page=1&pageSize=10
+GET {{baseUrl}}/doctors?page=1&pageSize=10&IncludePatients=true&includeAppointments=true
 
 ###
-GET {{baseUrl}}/doctors/2
+GET {{baseUrl}}/doctors/2?includeAppointments=true
 
 ###
 GET {{baseUrl}}/doctors/2/patients?includeAppointments=false
@@ -78,7 +78,7 @@ Content-Type: application/json
 {
   "firstName": "Ahmad",
   "lastName": "Khalil",
-  "specialist": "idk",
+  "specialty": "ENT",
   "phone": "0599999999",
   "age": 41,
   "yearOfExperience": 13
@@ -91,15 +91,30 @@ DELETE {{baseUrl}}/doctors/2
 GET {{baseUrl}}/appointments?page=1&pageSize=10
 
 ###
-GET {{baseUrl}}/appointments/5
+GET {{baseUrl}}/appointments/6
 
 ###
 POST {{baseUrl}}/appointments
 Content-Type: application/json
 
 {
-  "patientId": 10,
-  "doctorId": 10,
+  "patientId": 13,
+  "doctorId": 9,
   "symptoms" : "Headache",
   "date": "2026-01-10T12:00:00+03:00"
+}
+
+###
+PUT {{baseUrl}}/appointments/6
+Content-Type: application/json
+
+{
+  "appointmentId": 6,
+  "patientId": 6,
+  "doctorId": 2,
+  "isDone": true,
+  "date": "2026-12-18T09:00:00+02:00",
+  "symptoms": "Blurred vision",
+  "diagnostic": "Dry eye",
+  "medicine": "Eye drops"
 }

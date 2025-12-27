@@ -5,6 +5,8 @@ using ClinicAPI.GroupedRegistirations;
 using System.Diagnostics;
 using ClinicAPI.CustomExceptions;
 using System.Text.Json.Serialization;
+using ClinicAPI.Presistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +31,12 @@ builder.Services.AddInfrastructureServices();
 
 // Validators Services | Auto Fluent Validation
 builder.Services.AddValidatorsServices();
+
+// Adding The Db Context , (Since we injected it on ClinicDbContext/All Repos)
+builder.Services.AddDbContext<ClinicDbContext>(options =>
+{
+    options.UseSqlite("Data Source = clinic.db");
+});
 
 var app = builder.Build();
 

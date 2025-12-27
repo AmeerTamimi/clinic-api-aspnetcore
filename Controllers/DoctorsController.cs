@@ -11,7 +11,7 @@ namespace ClinicAPI.Controllers
     public class DoctorsController(IDoctorService _doctorService) : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetAll([FromQuery] DoctorSearchRequest query)
+        public IActionResult GetAll([FromQuery] DoctorQuery query)
         {
             var doctors = _doctorService.GetDoctorPage(query);
 
@@ -19,26 +19,26 @@ namespace ClinicAPI.Controllers
         }
 
         [HttpGet("{doctorId:int}")]
-        public IActionResult GetById([FromRoute] int doctorId)
+        public IActionResult GetById([FromRoute] int doctorId , [FromQuery] DoctorQuery query)
         {
-            var doctor = _doctorService.GetDoctorById(doctorId);
+            var doctor = _doctorService.GetDoctorById(doctorId , query);
 
             return Ok(doctor);
         }
 
         [HttpGet("{doctorId:int}/patients")]
-        public IActionResult GetPatients([FromRoute] int doctorId, [FromQuery] bool includeAppointments = false)
+        public IActionResult GetPatients([FromRoute] int doctorId, [FromQuery] PatientQuery query)
         {
 
-            var patients = _doctorService.GetDoctorPatients(doctorId, includeAppointments);
+            var patients = _doctorService.GetDoctorPatients(doctorId, query);
             
             return Ok(patients);
         }
 
         [HttpGet("{doctorId:int}/appointments")]
-        public IActionResult GetAppointments([FromRoute] int doctorId)
+        public IActionResult GetAppointments([FromRoute] int doctorId , [FromQuery] AppointmentQuery query)
         {
-            var appointments = _doctorService.GetDoctorAppointments(doctorId);
+            var appointments = _doctorService.GetDoctorAppointments(doctorId , query);
             
             return Ok(appointments);
         }

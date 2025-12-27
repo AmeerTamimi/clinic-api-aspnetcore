@@ -1,9 +1,9 @@
 ﻿namespace ClinicAPI.Query
 {
-    public class PatientSearchRequest
+    public class DoctorQuery
     {
         // For Search in General
-        public string? Query { get; set; } 
+        public string? Query { get; set; }
 
         // Pagination
         public int Page { get; set; } = 1;
@@ -17,6 +17,6 @@
         public int? MinAge { get; set; }
         public int? MaxAge { get; set; }
         public bool IncludeAppointments { get; set; } = false;
-        public int? doctorId { get; set; }
+        public bool IncludePatients { get; set; } = false;
     }
 }

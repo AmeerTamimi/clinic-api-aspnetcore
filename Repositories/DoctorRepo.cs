@@ -1,65 +1,68 @@
-﻿using ClinicAPI.Enums;
-using ClinicAPI.Models;
+﻿using ClinicAPI.Models;
+using ClinicAPI.Presistence;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClinicAPI.Repositories
 {
-    public class DoctorRepo : IDoctorRepo
+    public class DoctorRepo(ClinicDbContext context) : IDoctorRepo
     {
-        private static DateTimeOffset now = DateTimeOffset.UtcNow;
-
-        private static List<Doctor> _doctors = new List<Doctor>
-        {
-            new() { DoctorId = 1,  FirstName = "Ahmad",  LastName = "Khalil",    Specialty = DoctorSpecialty.Cardiology,    Phone = "+970599000001", CreatedAt = now.AddDays(-60), IsDeleted = false },
-            new() { DoctorId = 2,  FirstName = "Rana",   LastName = "Haddad",    Specialty = DoctorSpecialty.Dermatology,   Phone = "+970599000002", CreatedAt = now.AddDays(-55), IsDeleted = false },
-            new() { DoctorId = 3,  FirstName = "Omar",   LastName = "Safi",      Specialty = DoctorSpecialty.Orthopedics,   Phone = "+970599000003", CreatedAt = now.AddDays(-50), IsDeleted = false },
-            new() { DoctorId = 4,  FirstName = "Lina",   LastName = "Barghouti", Specialty = DoctorSpecialty.Pediatrics,    Phone = "+970599000004", CreatedAt = now.AddDays(-45), IsDeleted = false },
-            new() { DoctorId = 5,  FirstName = "Yousef", LastName = "Nassar",    Specialty = DoctorSpecialty.ENT,           Phone = "+970599000005", CreatedAt = now.AddDays(-40), IsDeleted = false },
-            new() { DoctorId = 6,  FirstName = "Hala",   LastName = "Masri",     Specialty = DoctorSpecialty.Neurology,     Phone = "+970599000006", CreatedAt = now.AddDays(-35), IsDeleted = false },
-            new() { DoctorId = 7,  FirstName = "Tariq",  LastName = "Qasem",     Specialty = DoctorSpecialty.Cardiology,       Phone = "+970599000007", CreatedAt = now.AddDays(-30), IsDeleted = false },
-            new() { DoctorId = 8,  FirstName = "Maya",   LastName = "Ayyad",     Specialty = DoctorSpecialty.GeneralPractice, Phone = "+970599000008", CreatedAt = now.AddDays(-25), IsDeleted = false },
-            new() { DoctorId = 9,  FirstName = "Nabil",  LastName = "Salameh",   Specialty = DoctorSpecialty.Neurology,       Phone = "+970599000009", CreatedAt = now.AddDays(-20), IsDeleted = false },
-            new() { DoctorId = 10, FirstName = "Sara",   LastName = "Zaid",      Specialty = DoctorSpecialty.Orthopedics,    Phone = "+970599000010", CreatedAt = now.AddDays(-15), IsDeleted = false },
-        };
         public Doctor GetDoctorById(int doctorId)
         {
-            return _doctors.FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted)!;
+            return context.Doctors
+                .AsNoTracking()
+                .Include(d => d.DoctorAppointments)
+                .Include(d => d.DoctorPatients)
+                .FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted)!;
         }
+
         public Doctor AddNewDoctor(Doctor newDoctor)
         {
-            int newId = _doctors.Count == 0 ? 1 : _doctors.Max(d => d.DoctorId) + 1;
-
-            newDoctor.DoctorId = newId;
             newDoctor.CreatedAt = DateTimeOffset.UtcNow;
             newDoctor.IsDeleted = false;
 
-            _doctors.Add(newDoctor);
+            context.Doctors.Add(newDoctor);
+            context.SaveChanges();
+
             return newDoctor;
         }
+
         public void UpdateDoctor(Doctor doctor, int doctorId)
         {
-            var toUpdate = _doctors.FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted)!;
+            var toUpdate = context.Doctors.FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted);
+            if (toUpdate is null) return;
 
             toUpdate.FirstName = doctor.FirstName;
             toUpdate.LastName = doctor.LastName;
             toUpdate.Specialty = doctor.Specialty;
             toUpdate.Phone = doctor.Phone;
+            toUpdate.Age = doctor.Age;
+            toUpdate.YearOfExperience = doctor.YearOfExperience;
+
+            context.SaveChanges();
         }
+
         public bool DeleteDoctorById(int doctorId)
         {
-            var toDelete = _doctors.FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted)!;
-            
+            var toDelete = context.Doctors.FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted);
+            if (toDelete is null) return false;
+
             toDelete.IsDeleted = true;
-            
+            context.SaveChanges();
             return true;
-        } 
+        }
+
         public int GetDoctorCount()
         {
-            return _doctors.Count(d => !d.IsDeleted);
+            return context.Doctors.Count(d => !d.IsDeleted);
         }
+
         public List<Doctor> GetDoctorPage(int page, int pageSize)
         {
-            return _doctors
+            return context.Doctors
+                .AsNoTracking()
                 .Where(d => !d.IsDeleted)
+                .Include(d => d.DoctorAppointments)
+                .Include(d => d.DoctorPatients)
                 .OrderBy(d => d.FirstName)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
@@ -68,9 +71,11 @@ namespace ClinicAPI.Repositories
 
         public List<Appointment> GetAppointment(int doctorId)
         {
-
-
-            return [];
+            return context.Appointments
+                .AsNoTracking()
+                .Where(a => !a.IsDeleted && a.DoctorId == doctorId)
+                .OrderBy(a => a.Date)
+                .ToList();
         }
     }
 }

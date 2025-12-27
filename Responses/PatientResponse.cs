@@ -1,4 +1,5 @@
 ﻿using ClinicAPI.Models;
+using ClinicAPI.Query;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,9 +24,9 @@ namespace ClinicAPI.Responses
             patientResponse.Age = patient.Age;
             patientResponse.DoctorId = patient.DoctorId;
             
-            if(patient.Appointments != null && includeAppointments)
+            if(patient.PatientAppointments != null && includeAppointments)
             {
-                patientResponse.Appointments = patient.Appointments.Where(a => a.PatientId == patientResponse.PatientId)
+                patientResponse.Appointments = patient.PatientAppointments.Where(a => a.PatientId == patientResponse.PatientId)
                                                                    .Select(a => AppointmentResponse.FromModel(a))
                                                                    .ToList();
             }
@@ -33,12 +34,12 @@ namespace ClinicAPI.Responses
             return patientResponse;
         }
 
-        public static IEnumerable<PatientResponse>? FromModels(IEnumerable<Patient>? patients, bool includeAppointments)
+        public static IEnumerable<PatientResponse>? FromModels(IEnumerable<Patient>? patients, PatientQuery query)
         {
             if (patients == null)
                 return null;
 
-            return patients.Select(p => FromModel(p , includeAppointments));
+            return patients.Select(p => FromModel(p , query.IncludeAppointments));
         }
     }
 }

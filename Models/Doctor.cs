@@ -11,8 +11,8 @@ namespace ClinicAPI.Models
         public string Phone { get; set; }
         public int Age { get; set; }
         public int YearOfExperience { get; set; }
-        public List<Patient>? Patients { get; set; }
-        public List<Appointment>? Appointments { get; set; }
+        public List<Patient>? DoctorPatients { get; set; }
+        public List<Appointment>? DoctorAppointments { get; set; }
         public DateTimeOffset CreatedAt { get; set; }
         public bool IsDeleted { get; set; }
     }

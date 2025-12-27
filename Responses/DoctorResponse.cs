@@ -1,5 +1,6 @@
 ﻿using ClinicAPI.Enums;
 using ClinicAPI.Models;
+using ClinicAPI.Query;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -30,24 +31,27 @@ namespace ClinicAPI.Responses
             doctorResponse.YearOfExperience = doctor.YearOfExperience;
             doctorResponse.Phone = doctor.Phone!;
 
-            if (doctor.Patients != null && includePatients)
+            if (doctor.DoctorPatients != null && includePatients)
             {
-                doctorResponse.Patients = doctor.Patients.Select(p => PatientResponse.FromModel(p , false)).ToList();
+                doctorResponse.Patients = doctor.DoctorPatients.Select(p => PatientResponse.FromModel(p , false)).ToList();
             }
-            if (doctor.Appointments != null && includeAppointments)
+            if (doctor.DoctorAppointments != null && includeAppointments)
             {
-                doctorResponse.Appointments = doctor.Appointments.Select(a => AppointmentResponse.FromModel(a)).ToList();
+                Console.WriteLine($"LEngth : : : :: :{doctor.DoctorAppointments.Count()}");
+                doctorResponse.Appointments = doctor.DoctorAppointments.Where(a => a.DoctorId == doctorResponse.DoctorId)
+                                                                   .Select(a => AppointmentResponse.FromModel(a))
+                                                                   .ToList();
             }
 
             return doctorResponse;
         }
 
-        public static IEnumerable<DoctorResponse>? FromModels(IEnumerable<Doctor>? doctors, bool includePatients, bool includeAppointments)
+        public static IEnumerable<DoctorResponse>? FromModels(IEnumerable<Doctor>? doctors, DoctorQuery query)
         {
             if (doctors == null)
                 return null;
 
-            return doctors.Select(d => FromModel(d, includePatients, includeAppointments));
+            return doctors.Select(d => FromModel(d, query.IncludePatients, query.IncludeAppointments));
         }
     }
 }
