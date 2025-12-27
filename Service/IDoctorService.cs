@@ -8,7 +8,7 @@ namespace ClinicAPI.Service
     {
         DoctorResponse GetDoctorById(int doctorId);
         DoctorResponse AddNewDoctor(CreateDoctorRequest newDoctor);
-        DoctorResponse UpdateDoctor(UpdateDoctorRequest doctor, int doctorId);
+        void UpdateDoctor(UpdateDoctorRequest doctor, int doctorId);
         DoctorResponse DeleteDoctorById(int doctorId);
         List<PatientResponse> GetDoctorPatients(int doctorId, bool includeAppointments);
         List<AppointmentResponse> GetDoctorAppointments(int doctorId);

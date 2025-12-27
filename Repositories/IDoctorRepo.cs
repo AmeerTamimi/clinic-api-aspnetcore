@@ -6,7 +6,7 @@ namespace ClinicAPI.Repositories
     {
         Doctor? GetDoctorById(int doctorId);
         Doctor AddNewDoctor(Doctor newDoctor);
-        Doctor UpdateDoctor(Doctor doctor , int doctorId);
+        void UpdateDoctor(Doctor doctor , int doctorId);
         bool DeleteDoctorById(int doctorId);
         int GetDoctorCount();
         List<Doctor> GetDoctorPage(int page, int pageSize);

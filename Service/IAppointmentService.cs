@@ -9,7 +9,7 @@ namespace ClinicAPI.Service
     {
         AppointmentResponse GetAppointmentById(int appointmentId);
         AppointmentResponse AddNewAppointment(CreateAppointmentRequest newAppointment);
-        AppointmentResponse UpdateAppointment(UpdateAppointmentRequest appointment , int appointmentId);
+        void UpdateAppointment(UpdateAppointmentRequest appointment , int appointmentId);
         AppointmentResponse DeleteAppointmentById(int appointmentId);
         PagedResult<AppointmentResponse> GetAppointmentPage(int page , int pageSize);
     }

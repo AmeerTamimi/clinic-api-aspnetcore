@@ -3,6 +3,8 @@ using Microsoft.Extensions.Options;
 using static ClinicAPI.Configuration.ClinicSettings;
 using ClinicAPI.GroupedRegistirations;
 using System.Diagnostics;
+using ClinicAPI.CustomExceptions;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,8 +13,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddOptions<ClinicSettings>()
     .Bind(builder.Configuration.GetSection(clinicName));
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+                .AddJsonOptions(o =>
+                            o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
+builder.Services.AddProblemDetails();
 
 // Service/Business Layer Services
 builder.Services.AddBusinessServices();
@@ -20,12 +27,16 @@ builder.Services.AddBusinessServices();
 // Infrastructure Layer Services
 builder.Services.AddInfrastructureServices();
 
+// Validators Services | Auto Fluent Validation
+builder.Services.AddValidatorsServices();
+
 var app = builder.Build();
 
 // ============================================================== MiddleWares Goes here ===================================================
 
 // This will add all Controllers Endpoints to our Route-Table , so Asp.net could pick The controllers' Endpoints and not give 404
-app.MapControllers(); 
+
+app.MapControllers();
 
 // Logging + Timing MW
 app.Use(async (context, next) =>
@@ -52,6 +63,8 @@ app.Use(async (context, next) =>
     }
     
 });
+app.UseExceptionHandler();
+
 
 // Adding headers to Requests MW
 app.Use(async (context, next) =>

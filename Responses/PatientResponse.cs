@@ -10,9 +10,6 @@ namespace ClinicAPI.Responses
         public string FirstName { get; set; } = default!;
         public string? LastName { get; set; }
         public int Age { get; set; }
-        public string? Symptoms { get; set; }
-        public string? Medicine { get; set; }
-        public string? Diagnostic { get; set; }
         public int DoctorId { get; set; }
         public List<AppointmentResponse>? Appointments { get; set; }
         private PatientResponse() { }
@@ -24,9 +21,6 @@ namespace ClinicAPI.Responses
             patientResponse.FirstName = patient.FirstName;
             patientResponse.LastName = patient.LastName;
             patientResponse.Age = patient.Age;
-            patientResponse.Symptoms = patient.Symptoms;
-            patientResponse.Medicine = patient.Medicine;
-            patientResponse.Diagnostic = patient.Diagnostic;
             patientResponse.DoctorId = patient.DoctorId;
             
             if(patient.Appointments != null && includeAppointments)

@@ -9,6 +9,9 @@ namespace ClinicAPI.Responses
         public int DoctorId { get; set; }
         public bool IsDone { get; set; }
         public DateTimeOffset Date { get; set; }
+        public string Symptoms { get; set; } = default!;
+        public string? Diagnostic { get; set; }
+        public string? Medicine { get; set; }
 
         private AppointmentResponse() { }
 
@@ -20,7 +23,10 @@ namespace ClinicAPI.Responses
                 PatientId = appointment.PatientId,
                 DoctorId = appointment.DoctorId,
                 Date = appointment.Date,
-                IsDone = appointment.IsDone
+                IsDone = appointment.IsDone,
+                Symptoms = appointment.Symptoms,
+                Diagnostic = appointment.Diagnostic,
+                Medicine = appointment.Medicine
             };
 
             return appointmentResponse;

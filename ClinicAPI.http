@@ -3,40 +3,103 @@
 ###
 GET {{baseUrl}}/route-table
 
+###
+GET {{baseUrl}}/patients?page=2&pageSize=10&includeAppointments=false
 
 ###
-GET {{baseUrl}}/patients?pageSize=10
+GET {{baseUrl}}/patients?page=1&pageSize=10&includeAppointments=true
 
 ###
-GET {{baseUrl}}/doctors/2/patients
+GET {{baseUrl}}/patients/10
+
+###
+GET {{baseUrl}}/patients/10/appointments
 
 ###
 POST {{baseUrl}}/patients
-Content-type: application/json
+Content-Type: application/json
 
 {
-    "firstName": "Ibrahim",
-    "lastName": "Shahin",
-    "age": 0,
-    "symptoms": "Fever",
-    "medicine": "Ibuprofen",
-    "diagnostic": "Viral infection",
-    "doctorId": 11
+  "firstName": "Ibrahim",
+  "lastName": "Hammouda",
+  "age": 20,
+  "doctorId" : 1
 }
 
 ###
-PUT {{baseUrl}}/patients/0
-Content-type: application/json
+PUT {{baseUrl}}/patients/14
+Content-Type: application/json
 
 {
-  "firstName": "Ibrahimmmm",
-    "lastName": "Shahin",
-    "age": 0,
-    "symptoms": "Fever",
-    "medicine": "Ibuprofen",
-    "diagnostic": "Viral infection",
-    "doctorId": 5
+  "firstName": "Ibrahim",
+  "lastName": "Shahin",
+  "age": 21,
+  "symptoms": "headache",
+  "medicine": "anything",
+  "diagnostic": "cold",
+  "doctorId": 2
 }
 
 ###
 DELETE {{baseUrl}}/patients/10
+
+###
+GET {{baseUrl}}/doctors?page=1&pageSize=10
+
+###
+GET {{baseUrl}}/doctors/2
+
+###
+GET {{baseUrl}}/doctors/2/patients?includeAppointments=false
+
+###
+GET {{baseUrl}}/doctors/2/patients?includeAppointments=true
+
+###
+GET {{baseUrl}}/doctors/2/appointments
+
+###
+POST {{baseUrl}}/doctors
+Content-Type: application/json
+
+{
+  "firstName": "Ahmad",
+  "lastName": "Khalil",
+  "specialist": "idk",
+  "phone": "0599999999",
+  "age": 40,
+  "yearOfExperience": 12
+}
+
+###
+PUT {{baseUrl}}/doctors/2
+Content-Type: application/json
+
+{
+  "firstName": "Ahmad",
+  "lastName": "Khalil",
+  "specialist": "idk",
+  "phone": "0599999999",
+  "age": 41,
+  "yearOfExperience": 13
+}
+
+###
+DELETE {{baseUrl}}/doctors/2
+
+###
+GET {{baseUrl}}/appointments?page=1&pageSize=10
+
+###
+GET {{baseUrl}}/appointments/5
+
+###
+POST {{baseUrl}}/appointments
+Content-Type: application/json
+
+{
+  "patientId": 10,
+  "doctorId": 10,
+  "symptoms" : "Headache",
+  "date": "2026-01-10T12:00:00+03:00"
+}

@@ -1,4 +1,5 @@
-﻿using ClinicAPI.Models;
+﻿using ClinicAPI.CustomExceptions;
+using ClinicAPI.Models;
 using ClinicAPI.Query;
 using ClinicAPI.Repositories;
 using ClinicAPI.Requests;
@@ -24,7 +25,7 @@ namespace ClinicAPI.Service
             var doctor = _doctorRepo.GetDoctorById(doctorId);
 
             if (doctor is null)
-                throw new ArgumentNullException("Doctor Does Not Exist");
+                throw new NotFoundException("Doctor Does Not Exist");
 
             return DoctorResponse.FromModel(doctor, false, false);
         }
@@ -33,22 +34,20 @@ namespace ClinicAPI.Service
         {
             IsValidDoctor(newDoctor);
 
-            Doctor doctor = FromRequest(newDoctor, 0);
+            Doctor doctor = FromCreateRequest(newDoctor);
 
             _doctorRepo.AddNewDoctor(doctor);
 
             return DoctorResponse.FromModel(doctor, false, false);
         }
 
-        public DoctorResponse UpdateDoctor(UpdateDoctorRequest doctor, int doctorId)
+        public void UpdateDoctor(UpdateDoctorRequest doctor, int doctorId)
         {
             IsValidDoctor(doctor, doctorId);
 
-            Doctor doctorModel = FromRequest(doctor, doctorId);
+            Doctor doctorModel = FromUpdateRequest(doctor, doctorId);
 
             _doctorRepo.UpdateDoctor(doctorModel, doctorId);
-
-            return DoctorResponse.FromModel(doctorModel, true, true);
         }
 
         public DoctorResponse DeleteDoctorById(int doctorId)
@@ -56,7 +55,7 @@ namespace ClinicAPI.Service
             var doctor = _doctorRepo.GetDoctorById(doctorId);
 
             if (doctor is null)
-                throw new ArgumentNullException("Doctor Does Not Exist");
+                throw new NotFoundException("Doctor Does Not Exist");
 
             _doctorRepo.DeleteDoctorById(doctorId);
 
@@ -68,7 +67,7 @@ namespace ClinicAPI.Service
             var doctor = _doctorRepo.GetDoctorById(doctorId);
 
             if (doctor is null)
-                throw new ArgumentNullException("Doctor Does Not Exist");
+                throw new NotFoundException("Doctor Does Not Exist");
 
             var patients = _patientRepo.GetPatientByDoctor(doctor);
 
@@ -83,7 +82,7 @@ namespace ClinicAPI.Service
             var doctor = _doctorRepo.GetDoctorById(doctorId);
 
             if (doctor is null)
-                throw new ArgumentNullException("Doctor Does Not Exist");
+                throw new NotFoundException("Doctor Does Not Exist");
 
             var appointments = _appointmentRepo.GetAppointmentByDoctorId(doctorId);
 
@@ -105,42 +104,73 @@ namespace ClinicAPI.Service
             return PagedResult<DoctorResponse>.GetPagedItems(doctorResponseList, doctorList.Count(), page, pageSize);
         }
 
-        private void IsValidDoctor(DoctorRequest doctorRequest, int doctorId = 0)
+        private void IsValidDoctor(CreateDoctorRequest doctorRequest)
         {
-            if (doctorId > 0)
-            {
-                var doctor = _doctorRepo.GetDoctorById(doctorId);
-                if (doctor is null)
-                    throw new ArgumentNullException("Doctor Does Not Exist");
-            }
+            if (doctorRequest is null)
+                throw new ValidationException("Invalid Doctor Data");
 
             if (!doctorRequest.FirstName.All(char.IsLetter) || !doctorRequest.LastName.All(char.IsLetter))
-                throw new ArgumentException("Name Must Contain Only Letters");
+                throw new ValidationException("Name Must Contain Only Letters");
 
             if (doctorRequest.Age < 0 || doctorRequest.Age > 120)
-                throw new ArgumentException("Invalid Age");
+                throw new ValidationException("Invalid Age");
 
             if (doctorRequest.YearOfExperience < 0 || doctorRequest.YearOfExperience > 100)
-                throw new ArgumentException("Invalid Years Of Experience");
+                throw new ValidationException("Invalid Years Of Experience");
 
             if (!doctorRequest.Phone.All(char.IsDigit) || doctorRequest.Phone.Count() < 10 || doctorRequest.Phone.Count() > 12)
-                throw new ArgumentException("Invalid Phone Number");
+                throw new ValidationException("Invalid Phone Number");
         }
 
-        private Doctor FromRequest(DoctorRequest doctorRequest, int doctorId)
+        private void IsValidDoctor(UpdateDoctorRequest doctorRequest, int doctorId)
+        {
+            var doctor = _doctorRepo.GetDoctorById(doctorId);
+            if (doctor is null)
+                throw new NotFoundException("Doctor Does Not Exist");
+
+            if (doctorRequest is null)
+                throw new ValidationException("Invalid Doctor Data");
+
+            if (!doctorRequest.FirstName.All(char.IsLetter) || !doctorRequest.LastName.All(char.IsLetter))
+                throw new ValidationException("Name Must Contain Only Letters");
+
+            if (doctorRequest.Age < 0 || doctorRequest.Age > 120)
+                throw new ValidationException("Invalid Age");
+
+            if (doctorRequest.YearOfExperience < 0 || doctorRequest.YearOfExperience > 100)
+                throw new ValidationException("Invalid Years Of Experience");
+
+            if (!doctorRequest.Phone.All(char.IsDigit) || doctorRequest.Phone.Count() < 10 || doctorRequest.Phone.Count() > 12)
+                throw new ValidationException("Invalid Phone Number");
+        }
+
+        private Doctor FromCreateRequest(CreateDoctorRequest doctorRequest)
         {
             var doctor = new Doctor
             {
                 FirstName = doctorRequest.FirstName,
                 LastName = doctorRequest.LastName,
-                Specialist = doctorRequest.Specialist,
+                Specialty = doctorRequest.Specialty,
                 Phone = doctorRequest.Phone,
                 Age = doctorRequest.Age,
                 YearOfExperience = doctorRequest.YearOfExperience
             };
 
-            if (doctorRequest is UpdateDoctorRequest)
-                doctor.DoctorId = doctorId;
+            return doctor;
+        }
+
+        private Doctor FromUpdateRequest(UpdateDoctorRequest doctorRequest, int doctorId)
+        {
+            var doctor = new Doctor
+            {
+                DoctorId = doctorId,
+                FirstName = doctorRequest.FirstName,
+                LastName = doctorRequest.LastName,
+                Specialty = doctorRequest.Specialty,
+                Phone = doctorRequest.Phone,
+                Age = doctorRequest.Age,
+                YearOfExperience = doctorRequest.YearOfExperience
+            };
 
             return doctor;
         }

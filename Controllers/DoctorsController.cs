@@ -14,95 +14,57 @@ namespace ClinicAPI.Controllers
         public IActionResult GetAll([FromQuery] DoctorSearchRequest query)
         {
             var doctors = _doctorService.GetDoctorPage(query);
+
             return Ok(doctors);
         }
 
         [HttpGet("{doctorId:int}")]
         public IActionResult GetById([FromRoute] int doctorId)
         {
-            try
-            {
-                var doctor = _doctorService.GetDoctorById(doctorId);
-                return Ok(doctor);
-            }
-            catch (ArgumentNullException e)
-            {
-                return NotFound(e.Message);
-            }
+            var doctor = _doctorService.GetDoctorById(doctorId);
+
+            return Ok(doctor);
         }
 
         [HttpGet("{doctorId:int}/patients")]
         public IActionResult GetPatients([FromRoute] int doctorId, [FromQuery] bool includeAppointments = false)
         {
-            try
-            {
-                var patients = _doctorService.GetDoctorPatients(doctorId, includeAppointments);
-                return Ok(patients);
-            }
-            catch (ArgumentNullException e)
-            {
-                return NotFound(e.Message);
-            }
+
+            var patients = _doctorService.GetDoctorPatients(doctorId, includeAppointments);
+            
+            return Ok(patients);
         }
 
         [HttpGet("{doctorId:int}/appointments")]
         public IActionResult GetAppointments([FromRoute] int doctorId)
         {
-            try
-            {
-                var appointments = _doctorService.GetDoctorAppointments(doctorId);
-                return Ok(appointments);
-            }
-            catch (ArgumentNullException e)
-            {
-                return NotFound(e.Message);
-            }
+            var appointments = _doctorService.GetDoctorAppointments(doctorId);
+            
+            return Ok(appointments);
         }
 
         [HttpPost]
         public IActionResult AddDoctor([FromBody] CreateDoctorRequest createRequest)
         {
-            try
-            {
-                var doctor = _doctorService.AddNewDoctor(createRequest);
-                return Ok(doctor);
-            }
-            catch (ArgumentException e)
-            {
-                return BadRequest(e.Message);
-            }
+            var doctor = _doctorService.AddNewDoctor(createRequest);
+                
+            return Created($"Doctor With Id {doctor.DoctorId} Was Created",doctor);
         }
 
         [HttpPut("{id:int}")]
         public IActionResult UpdateDoctor([FromBody] UpdateDoctorRequest updateRequest, [FromRoute(Name = "id")] int doctorId)
         {
-            try
-            {
-                _doctorService.UpdateDoctor(updateRequest, doctorId);
-                return NoContent();
-            }
-            catch (ArgumentNullException e)
-            {
-                return NotFound(e.Message);
-            }
-            catch (ArgumentException e)
-            {
-                return BadRequest(e.Message);
-            }
+            _doctorService.UpdateDoctor(updateRequest, doctorId);
+
+            return NoContent();
         }
 
         [HttpDelete("{doctorId:int}")]
         public IActionResult DeleteDoctorById([FromRoute] int doctorId)
         {
-            try
-            {
-                var doctor = _doctorService.DeleteDoctorById(doctorId);
-                return Ok(doctor);
-            }
-            catch (ArgumentNullException e)
-            {
-                return NotFound(e.Message);
-            }
+            var doctor = _doctorService.DeleteDoctorById(doctorId);
+
+            return Ok(doctor);
         }
     }
 }

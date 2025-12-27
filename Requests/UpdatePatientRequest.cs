@@ -1,10 +1,13 @@
 ﻿
-using ClinicAPI.Models;
+using ClinicAPI.Responses;
 
 namespace ClinicAPI.Requests
 {
-    public class UpdatePatientRequest : PatientRequest
+    public class UpdatePatientRequest
     {
-        public List<Appointment>? Appointments { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public int Age { get; set; }
+        public int DoctorId { get; set; }
     }
 }

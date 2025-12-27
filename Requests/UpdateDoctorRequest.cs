@@ -1,10 +1,15 @@
-﻿using ClinicAPI.Models;
+﻿using ClinicAPI.Enums;
+using ClinicAPI.Models;
 
 namespace ClinicAPI.Requests
 {
-    public class UpdateDoctorRequest : DoctorRequest
+    public class UpdateDoctorRequest
     {
-        public List<int>? Patients { get; set; }
-        public List<int>? Appointments { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public DoctorSpecialty Specialty { get; set; }
+        public string Phone { get; set; }
+        public int Age { get; set; }
+        public int YearOfExperience { get; set; }
     }
 }

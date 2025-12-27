@@ -1,4 +1,5 @@
-﻿using ClinicAPI.Models;
+﻿using ClinicAPI.Enums;
+using ClinicAPI.Models;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -9,7 +10,7 @@ namespace ClinicAPI.Responses
         public int DoctorId { get; set; }
         public string FirstName { get; set; } = default!;
         public string LastName { get; set; } = default!;
-        public string Specialist { get; set; } = default!;
+        public DoctorSpecialty Specialty { get; set; } = default!;
         public int Age { get; set; }
         public string Phone { get; set; }
         public int YearOfExperience { get; set; }
@@ -24,7 +25,7 @@ namespace ClinicAPI.Responses
             doctorResponse.DoctorId = doctor.DoctorId;
             doctorResponse.FirstName = doctor.FirstName;
             doctorResponse.LastName = doctor.LastName;
-            doctorResponse.Specialist = doctor.Specialist;
+            doctorResponse.Specialty = doctor.Specialty;
             doctorResponse.Age = doctor.Age;
             doctorResponse.YearOfExperience = doctor.YearOfExperience;
             doctorResponse.Phone = doctor.Phone!;

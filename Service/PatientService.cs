@@ -1,7 +1,8 @@
 ﻿using ClinicAPI.Models;
-using ClinicAPI.Repositories;
 using ClinicAPI.Requests;
 using ClinicAPI.Responses;
+using ClinicAPI.CustomExceptions;
+using ClinicAPI.Repositories;
 
 namespace ClinicAPI.Service
 {
@@ -21,31 +22,33 @@ namespace ClinicAPI.Service
             var patient = _patientRepo.GetPatientById(patientId);
 
             if (patient is null)
-                throw new ArgumentNullException("Patient Not Found");
+                throw new NotFoundException("Patient Not Found");
 
             return PatientResponse.FromModel(patient, false);
         }
 
-        public PatientResponse AddNewPatient(CreatePatientRequest NewPatient)
+        public PatientResponse AddNewPatient(CreatePatientRequest patientRequest)
         {
-            IsValidPatient(NewPatient);
+            IsValidPatient(patientRequest);
 
-            var patient = FromRequest(NewPatient);
+            var patient = FromCreateRequest(patientRequest);
 
             var createdPatient = _patientRepo.AddNewPatient(patient);
 
             return PatientResponse.FromModel(createdPatient, false);
         }
 
-        public PatientResponse UpdatePatient(UpdatePatientRequest Patient, int PatientId)
+        public void UpdatePatient(UpdatePatientRequest patientRequest, int patientId)
         {
-            IsValidPatient(Patient, PatientId);
+            IsValidPatient(patientRequest, patientId);
 
-            var patient = FromRequest(Patient, PatientId);
+            var patient = FromUpdateRequest(patientRequest, patientId);
 
-            var updatedPatient = _patientRepo.UpdatePatient(patient);
+            var succed = _patientRepo.UpdatePatient(patient);
 
-            return PatientResponse.FromModel(updatedPatient, true);
+            if (!succed)
+                throw new ServerException("Sorry, couldn't update the Patient");
+
         }
 
         public PatientResponse DeletePatient(int patientId)
@@ -53,9 +56,12 @@ namespace ClinicAPI.Service
             var patient = _patientRepo.GetPatientById(patientId);
 
             if (patient is null)
-                throw new ArgumentNullException("Patient Does Not Exist");
+                throw new NotFoundException($"Patient Does Not Exist With Id {patientId}");
 
-            _patientRepo.DeletePatientById(patientId);
+            var succeded = _patientRepo.DeletePatientById(patientId);
+
+            if (!succeded)
+                throw new ServerException("Sorry, couldn't delete the Patient");
 
             return PatientResponse.FromModel(patient, true);
         }
@@ -91,41 +97,56 @@ namespace ClinicAPI.Service
             return PagedResult<PatientResponse>.GetPagedItems(patientsResponse, totalItems, page, pageSize);
         }
 
-        private void IsValidPatient(PatientRequest patientRequest, int patientId = 0)
+        private void IsValidPatient(CreatePatientRequest patientRequest)
         {
-            if (patientId > 0)
-            {
-                var patient = _patientRepo.GetPatientById(patientId);
-                if (patient is null)
-                    throw new ArgumentNullException("Patient Does Not Exist");
-            }
 
             if (patientRequest is null)
-                throw new ArgumentNullException("Invalid Patient Data");
+                throw new ValidationException("Invalid Patient Data");
 
             if (!patientRequest.FirstName.All(char.IsLetter) || !patientRequest.LastName.All(char.IsLetter))
-                throw new ArgumentException("Name Must Contain Only Letters");
+                throw new ValidationException("Name Must Contain Only Letters");
+
+            if (patientRequest.Age < 0 || patientRequest.Age > 130)
+                throw new ValidationException("Age Must Be Between 0-130");
+        }
+        private void IsValidPatient(UpdatePatientRequest patientRequest , int patientId)
+        {
+            var patient = _patientRepo.GetPatientById(patientId);
+            if (patient is null)
+                throw new NotFoundException($"Patient with Id {patientId} Does Not Exist");
+
+            if (patientRequest is null)
+                throw new ValidationException("Invalid Patient Data");
+
+            if (!patientRequest.FirstName.All(char.IsLetter) || !patientRequest.LastName.All(char.IsLetter))
+                throw new ValidationException("Name Must Contain Only Letters");
 
             if (patientRequest.Age < 0 || patientRequest.Age > 120)
-                throw new ArgumentException("Invalid Age");
+                throw new ValidationException("Age Must Be Between 0-120");
         }
 
-        private Patient FromRequest(PatientRequest patientRequest, int id = 0)
+        private Patient FromCreateRequest(CreatePatientRequest patientRequest)
         {
             var patient = new Patient
             {
                 FirstName = patientRequest.FirstName,
                 LastName = patientRequest.LastName,
                 Age = patientRequest.Age,
-                Symptoms = patientRequest.Symptoms,
-                Medicine = patientRequest.Medicine,
-                Diagnostic = patientRequest.Diagnostic,
                 DoctorId = patientRequest.DoctorId
             };
 
-            if (patientRequest is UpdatePatientRequest)
-                patient.PatientId = id;
-
+            return patient;
+        }
+        private Patient FromUpdateRequest(UpdatePatientRequest patientRequest , int patientId)
+        {
+            var patient = new Patient
+            {
+                PatientId = patientId,
+                FirstName = patientRequest.FirstName,
+                LastName = patientRequest.LastName,
+                Age = (int) patientRequest.Age,
+                DoctorId = (int) patientRequest.DoctorId
+            };
             return patient;
         }
     }
