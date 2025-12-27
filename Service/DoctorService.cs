@@ -20,9 +20,9 @@ namespace ClinicAPI.Service
             _appointmentRepo = appointmentRepo;
         }
 
-        public DoctorResponse GetDoctorById(int doctorId , DoctorQuery query)
+        public async Task<DoctorResponse> GetDoctorByIdAsync(int doctorId, DoctorQuery query)
         {
-            var doctor = _doctorRepo.GetDoctorById(doctorId);
+            var doctor = await _doctorRepo.GetDoctorByIdAsync(doctorId);
 
             if (doctor is null)
                 throw new NotFoundException("Doctor Does Not Exist");
@@ -30,46 +30,47 @@ namespace ClinicAPI.Service
             return DoctorResponse.FromModel(doctor, query.IncludePatients, query.IncludeAppointments);
         }
 
-        public DoctorResponse AddNewDoctor(CreateDoctorRequest newDoctor)
+        public async Task<DoctorResponse> AddNewDoctorAsync(CreateDoctorRequest newDoctor)
         {
             IsValidDoctor(newDoctor);
 
             Doctor doctor = FromCreateRequest(newDoctor);
 
-            _doctorRepo.AddNewDoctor(doctor);
+            var created = await _doctorRepo.AddNewDoctorAsync(doctor);
 
-            return DoctorResponse.FromModel(doctor, false, false);
+            return DoctorResponse.FromModel(created, false, false);
         }
 
-        public void UpdateDoctor(UpdateDoctorRequest doctor, int doctorId)
+        public async Task UpdateDoctorAsync(UpdateDoctorRequest doctor, int doctorId)
         {
-            IsValidDoctor(doctor, doctorId);
+            await IsValidDoctorAsync(doctor, doctorId);
 
             Doctor doctorModel = FromUpdateRequest(doctor, doctorId);
-
-            _doctorRepo.UpdateDoctor(doctorModel, doctorId);
         }
 
-        public DoctorResponse DeleteDoctorById(int doctorId)
+        public async Task<DoctorResponse> DeleteDoctorByIdAsync(int doctorId)
         {
-            var doctor = _doctorRepo.GetDoctorById(doctorId);
+            var doctor = await _doctorRepo.GetDoctorByIdAsync(doctorId);
 
             if (doctor is null)
                 throw new NotFoundException("Doctor Does Not Exist");
 
-            _doctorRepo.DeleteDoctorById(doctorId);
+            var succeded = await _doctorRepo.DeleteDoctorByIdAsync(doctorId);
+
+            if (!succeded)
+                throw new ServerException("Sorry, couldn't delete the Doctor");
 
             return DoctorResponse.FromModel(doctor, true, true);
         }
 
-        public List<PatientResponse> GetDoctorPatients(int doctorId, PatientQuery query)
+        public async Task<List<PatientResponse>> GetDoctorPatientsAsync(int doctorId, PatientQuery query)
         {
-            var doctor = _doctorRepo.GetDoctorById(doctorId);
+            var doctor = await _doctorRepo.GetDoctorByIdAsync(doctorId);
 
             if (doctor is null)
                 throw new NotFoundException("Doctor Does Not Exist");
 
-            var patients = _patientRepo.GetPatientByDoctor(doctor);
+            var patients = await _patientRepo.GetPatientByDoctorAsync(doctor);
 
             if (patients is null)
                 return [];
@@ -77,31 +78,33 @@ namespace ClinicAPI.Service
             return PatientResponse.FromModels(patients, query)!.ToList();
         }
 
-        public List<AppointmentResponse> GetDoctorAppointments(int doctorId , AppointmentQuery query)
+        public async Task<List<AppointmentResponse>> GetDoctorAppointmentsAsync(int doctorId, AppointmentQuery query)
         {
-            var doctor = _doctorRepo.GetDoctorById(doctorId);
+            var doctor = await _doctorRepo.GetDoctorByIdAsync(doctorId);
 
             if (doctor is null)
                 throw new NotFoundException("Doctor Does Not Exist");
 
-            var appointments = _appointmentRepo.GetAppointmentByDoctorId(doctorId);
+            var appointments = await _appointmentRepo.GetAppointmentByDoctorIdAsync(doctorId);
 
             if (appointments is null)
                 return [];
 
-            return AppointmentResponse.FromModels(appointments , query)!.ToList();
+            return AppointmentResponse.FromModels(appointments, query)!.ToList();
         }
 
-        public PagedResult<DoctorResponse> GetDoctorPage(DoctorQuery query)
+        public async Task<PagedResult<DoctorResponse>> GetDoctorPageAsync(DoctorQuery query)
         {
             int page = Math.Max(query.Page, 1);
             int pageSize = Math.Clamp(query.PageSize, 3, 100);
 
-            var doctorList = _doctorRepo.GetDoctorPage(page, pageSize);
+            var totalItems = await _doctorRepo.GetDoctorCountAsync();
 
-            var doctorResponseList = DoctorResponse.FromModels(doctorList,query);
+            var doctorList = await _doctorRepo.GetDoctorPageAsync(page, pageSize);
 
-            return PagedResult<DoctorResponse>.GetPagedItems(doctorResponseList, doctorList.Count(), page, pageSize);
+            var doctorResponseList = DoctorResponse.FromModels(doctorList, query);
+
+            return PagedResult<DoctorResponse>.GetPagedItems(doctorResponseList, totalItems, page, pageSize);
         }
 
         private void IsValidDoctor(CreateDoctorRequest doctorRequest)
@@ -122,9 +125,9 @@ namespace ClinicAPI.Service
                 throw new ValidationException("Invalid Phone Number");
         }
 
-        private void IsValidDoctor(UpdateDoctorRequest doctorRequest, int doctorId)
+        private async Task IsValidDoctorAsync(UpdateDoctorRequest doctorRequest, int doctorId)
         {
-            var doctor = _doctorRepo.GetDoctorById(doctorId);
+            var doctor = await _doctorRepo.GetDoctorByIdAsync(doctorId);
             if (doctor is null)
                 throw new NotFoundException("Doctor Does Not Exist");
 

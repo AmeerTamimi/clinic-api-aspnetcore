@@ -4,12 +4,12 @@ namespace ClinicAPI.Repositories
 {
     public interface IPatientRepo
     {
-        Patient? GetPatientById(int patientId);
-        Patient AddNewPatient(Patient newPatient);
-        bool UpdatePatient(Patient patient);
-        bool DeletePatientById(int patientId);
-        int GetPatientCount();
-        List<Patient> GetPatientPage(int page , int pageSize);
-        List<Patient> GetPatientByDoctor(Doctor doctorId);
+        Task<Patient?> GetPatientByIdAsync(int patientId);
+        Task<Patient> AddNewPatientAsync(Patient newPatient);
+        Task<bool> UpdatePatientAsync(Patient patient);
+        Task<bool> DeletePatientByIdAsync(int patientId);
+        Task<int> GetPatientCountAsync();
+        Task<List<Patient>> GetPatientPageAsync(int page , int pageSize);
+        Task<List<Patient>> GetPatientByDoctorAsync(Doctor doctorId);
     }
 }

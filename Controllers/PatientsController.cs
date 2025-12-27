@@ -1,6 +1,5 @@
 ﻿using ClinicAPI.Query;
 using ClinicAPI.Requests;
-using ClinicAPI.Responses;
 using ClinicAPI.Service;
 using Microsoft.AspNetCore.Mvc;
 
@@ -11,50 +10,44 @@ namespace ClinicAPI.Controllers
     public class PatientsController(IPatientService _patientService) : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetAll([FromQuery] PatientQuery query)
+        public async Task<IActionResult> GetAll([FromQuery] PatientQuery query)
         {
-            var patients = _patientService.GetPatientPage(query);
-
+            var patients = await _patientService.GetPatientPageAsync(query);
             return Ok(patients);
         }
 
         [HttpGet("{patientId:int}")]
-        public IActionResult GetById(int patientId , [FromQuery] PatientQuery query)
+        public async Task<IActionResult> GetById(int patientId, [FromQuery] PatientQuery query)
         {
-            var patient = _patientService.GetPatientById(patientId , query);
-
+            var patient = await _patientService.GetPatientByIdAsync(patientId, query);
             return Ok(patient);
         }
 
         [HttpGet("{patientId:int}/appointments")]
-        public IActionResult GetAppointments(int patientId ,[FromQuery] AppointmentQuery query)
+        public async Task<IActionResult> GetAppointments(int patientId, [FromQuery] AppointmentQuery query)
         {
-            var appointments = _patientService.GetAppointmentByPatientId(patientId , query);
-            
+            var appointments = await _patientService.GetAppointmentByPatientIdAsync(patientId, query);
             return Ok(appointments);
         }
 
         [HttpPost]
-        public IActionResult AddPatient([FromBody] CreatePatientRequest createRequest)
+        public async Task<IActionResult> AddPatient([FromBody] CreatePatientRequest createRequest)
         {
-            var patient = _patientService.AddNewPatient(createRequest);
-            
-            return Created($"Patient With Id {patient.PatientId} was Created",patient);
+            var patient = await _patientService.AddNewPatientAsync(createRequest);
+            return Created($"Patient With Id {patient.PatientId} was Created", patient);
         }
 
-        [HttpPut("{id:int}")]
-        public IActionResult UpdatePatient([FromBody] UpdatePatientRequest updateRequest, [FromRoute(Name = "id")] int patientId)
+        [HttpPut("{patientId:int}")]
+        public async Task<IActionResult> UpdatePatient([FromBody] UpdatePatientRequest updateRequest,int patientId)
         {
-            _patientService.UpdatePatient(updateRequest, patientId);
-
+            await _patientService.UpdatePatientAsync(updateRequest, patientId);
             return NoContent();
         }
 
         [HttpDelete("{patientId:int}")]
-        public IActionResult DeletePatientById([FromRoute] int patientId)
+        public async Task<IActionResult> DeletePatientById([FromRoute] int patientId)
         {
-            var patient = _patientService.DeletePatient(patientId);
-
+            var patient = await _patientService.DeletePatientAsync(patientId);
             return Ok(patient);
         }
     }

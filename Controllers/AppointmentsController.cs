@@ -10,44 +10,42 @@ namespace ClinicAPI.Controllers
     public class AppointmentsController(IAppointmentService _appointmentService) : ControllerBase
     {
         [HttpGet]
-        public IActionResult GetAll([FromQuery] AppointmentQuery query)
+        public async Task<IActionResult> GetAll([FromQuery] AppointmentQuery query)
         {
-            var appointments = _appointmentService.GetAppointmentPage(query);
-
+            var appointments = await _appointmentService.GetAppointmentPageAsync(query);
             return Ok(appointments);
         }
 
         [HttpGet("{appointmentId:int}")]
-        public IActionResult GetById([FromRoute] int appointmentId)
+        public async Task<IActionResult> GetById([FromRoute] int appointmentId)
         {
-            var appointment = _appointmentService.GetAppointmentById(appointmentId);
-
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(appointmentId);
             return Ok(appointment);
         }
 
         [HttpPost]
-        public IActionResult AddAppointment([FromBody] CreateAppointmentRequest createRequest)
+        public async Task<IActionResult> AddAppointment([FromBody] CreateAppointmentRequest createRequest)
         {
-            var appointment = _appointmentService.AddNewAppointment(createRequest);
+            var appointment = await _appointmentService.AddNewAppointmentAsync(createRequest);
 
-            return Created($"Appointment With Patient Id : {appointment.PatientId} ,Doctor Id :{appointment.DoctorId} Was created "
-                ,appointment);
+            return Created(
+                $"Appointment With Patient Id : {appointment.PatientId} ,Doctor Id :{appointment.DoctorId} Was created ",
+                appointment
+            );
         }
 
-        [HttpPut("{id:int}")]
-        public IActionResult UpdateAppointment([FromBody] UpdateAppointmentRequest updateRequest, [FromRoute(Name = "id")] int appointmentId)
+        [HttpPut("{appointmentId:int}")]
+        public async Task<IActionResult> UpdateAppointment([FromBody] UpdateAppointmentRequest updateRequest, int appointmentId)
         {
-            _appointmentService.UpdateAppointment(updateRequest, appointmentId);
-
+            await _appointmentService.UpdateAppointmentAsync(updateRequest, appointmentId);
             return NoContent();
         }
 
         [HttpDelete("{appointmentId:int}")]
-        public IActionResult DeleteAppointmentById([FromRoute] int appointmentId)
+        public async Task<IActionResult> DeleteAppointmentById([FromRoute] int appointmentId)
         {
-            var appointment = _appointmentService.DeleteAppointmentById(appointmentId);
-
+            var appointment = await _appointmentService.DeleteAppointmentByIdAsync(appointmentId);
             return Ok(appointment);
-    }
+        }
     }
 }

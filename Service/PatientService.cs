@@ -18,9 +18,9 @@ namespace ClinicAPI.Service
             _appointmentRepo = appointmentRepo;
         }
 
-        public PatientResponse GetPatientById(int patientId , PatientQuery query)
+        public async Task<PatientResponse> GetPatientByIdAsync(int patientId , PatientQuery query)
         {
-            var patient = _patientRepo.GetPatientById(patientId);
+            var patient = await _patientRepo.GetPatientByIdAsync(patientId);
 
             if (patient is null)
                 throw new NotFoundException("Patient Not Found");
@@ -28,38 +28,38 @@ namespace ClinicAPI.Service
             return PatientResponse.FromModel(patient, query.IncludeAppointments);
         }
 
-        public PatientResponse AddNewPatient(CreatePatientRequest patientRequest)
+        public async Task<PatientResponse> AddNewPatientAsync(CreatePatientRequest patientRequest)
         {
             IsValidPatient(patientRequest);
 
             var patient = FromCreateRequest(patientRequest);
 
-            var createdPatient = _patientRepo.AddNewPatient(patient);
+            var createdPatient = await _patientRepo.AddNewPatientAsync(patient);
 
             return PatientResponse.FromModel(createdPatient, false);
         }
 
-        public void UpdatePatient(UpdatePatientRequest patientRequest, int patientId)
+        public async Task UpdatePatientAsync(UpdatePatientRequest patientRequest, int patientId)
         {
             IsValidPatient(patientRequest, patientId);
 
             var patient = FromUpdateRequest(patientRequest, patientId);
 
-            var succed = _patientRepo.UpdatePatient(patient);
+            var succed = await _patientRepo.UpdatePatientAsync(patient);
 
             if (!succed)
                 throw new ServerException("Sorry, couldn't update the Patient");
 
         }
 
-        public PatientResponse DeletePatient(int patientId)
+        public async Task<PatientResponse> DeletePatientAsync(int patientId)
         {
-            var patient = _patientRepo.GetPatientById(patientId);
+            var patient = await  _patientRepo.GetPatientByIdAsync(patientId);
 
             if (patient is null)
                 throw new NotFoundException($"Patient Does Not Exist With Id {patientId}");
 
-            var succeded = _patientRepo.DeletePatientById(patientId);
+            var succeded = await _patientRepo.DeletePatientByIdAsync(patientId);
 
             if (!succeded)
                 throw new ServerException("Sorry, couldn't delete the Patient");
@@ -67,14 +67,14 @@ namespace ClinicAPI.Service
             return PatientResponse.FromModel(patient, true);
         }
 
-        public List<AppointmentResponse> GetAppointmentByPatientId(int patientId , AppointmentQuery query)
+        public async Task<List<AppointmentResponse>> GetAppointmentByPatientIdAsync(int patientId , AppointmentQuery query)
         {
-            var patient = _patientRepo.GetPatientById(patientId);
+            var patient = await _patientRepo.GetPatientByIdAsync(patientId);
 
             if (patient is null)
                 throw new ArgumentNullException("Patient Does Not Exist");
 
-            var appointments = _appointmentRepo.GetAppointmentByPatientId(patientId);
+            var appointments = await _appointmentRepo.GetAppointmentByPatientIdAsync(patientId);
 
             if (appointments is null)
                 return [];
@@ -84,7 +84,7 @@ namespace ClinicAPI.Service
             return AppointmentResponse.FromModels(patient.PatientAppointments , query)!.ToList();
         }
 
-        public PagedResult<PatientResponse> GetPatientPage(PatientQuery query)
+        public async Task<PagedResult<PatientResponse>> GetPatientPageAsync(PatientQuery query)
         {
             int page = query.Page;
             int pageSize = query.PageSize;
@@ -92,9 +92,9 @@ namespace ClinicAPI.Service
             page = Math.Max(1, page);
             pageSize = Math.Clamp(pageSize, 1, 100);
 
-            int totalItems = _patientRepo.GetPatientCount();
+            int totalItems = await _patientRepo.GetPatientCountAsync();
 
-            var patients = _patientRepo.GetPatientPage(page, pageSize);
+            var patients = await _patientRepo.GetPatientPageAsync(page, pageSize);
 
             var patientsResponse = PatientResponse.FromModels(patients, query);
 
@@ -113,9 +113,9 @@ namespace ClinicAPI.Service
             if (patientRequest.Age < 0 || patientRequest.Age > 130)
                 throw new ValidationException("Age Must Be Between 0-130");
         }
-        private void IsValidPatient(UpdatePatientRequest patientRequest , int patientId)
+        private async void IsValidPatient(UpdatePatientRequest patientRequest , int patientId)
         {
-            var patient = _patientRepo.GetPatientById(patientId);
+            var patient = await _patientRepo.GetPatientByIdAsync(patientId);
             if (patient is null)
                 throw new NotFoundException($"Patient with Id {patientId} Does Not Exist");
 

@@ -6,12 +6,12 @@ namespace ClinicAPI.Service
 {
     public interface IDoctorService
     {
-        DoctorResponse GetDoctorById(int doctorId , DoctorQuery query);
-        DoctorResponse AddNewDoctor(CreateDoctorRequest newDoctor);
-        void UpdateDoctor(UpdateDoctorRequest doctor, int doctorId);
-        DoctorResponse DeleteDoctorById(int doctorId);
-        List<PatientResponse> GetDoctorPatients(int doctorId, PatientQuery query);
-        List<AppointmentResponse> GetDoctorAppointments(int doctorId, AppointmentQuery query);
-        PagedResult<DoctorResponse> GetDoctorPage(DoctorQuery query);
+        Task<DoctorResponse> GetDoctorByIdAsync(int doctorId, DoctorQuery query);
+        Task<DoctorResponse> AddNewDoctorAsync(CreateDoctorRequest newDoctor);
+        Task UpdateDoctorAsync(UpdateDoctorRequest doctor, int doctorId);
+        Task<DoctorResponse> DeleteDoctorByIdAsync(int doctorId);
+        Task<List<PatientResponse>> GetDoctorPatientsAsync(int doctorId, PatientQuery query);
+        Task<List<AppointmentResponse>> GetDoctorAppointmentsAsync(int doctorId, AppointmentQuery query);
+        Task<PagedResult<DoctorResponse>> GetDoctorPageAsync(DoctorQuery query);
     }
 }

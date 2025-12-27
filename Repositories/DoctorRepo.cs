@@ -6,30 +6,30 @@ namespace ClinicAPI.Repositories
 {
     public class DoctorRepo(ClinicDbContext context) : IDoctorRepo
     {
-        public Doctor GetDoctorById(int doctorId)
+        public async Task<Doctor?> GetDoctorByIdAsync(int doctorId)
         {
-            return context.Doctors
+            return await context.Doctors
                 .AsNoTracking()
                 .Include(d => d.DoctorAppointments)
                 .Include(d => d.DoctorPatients)
-                .FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted)!;
+                .SingleOrDefaultAsync(d => d.DoctorId == doctorId && !d.IsDeleted);
         }
 
-        public Doctor AddNewDoctor(Doctor newDoctor)
+        public async Task<Doctor> AddNewDoctorAsync(Doctor newDoctor)
         {
             newDoctor.CreatedAt = DateTimeOffset.UtcNow;
             newDoctor.IsDeleted = false;
 
-            context.Doctors.Add(newDoctor);
-            context.SaveChanges();
+            await context.Doctors.AddAsync(newDoctor);
+            await context.SaveChangesAsync();
 
             return newDoctor;
         }
 
-        public void UpdateDoctor(Doctor doctor, int doctorId)
+        public async Task UpdateDoctorAsync(Doctor doctor, int doctorId)
         {
-            var toUpdate = context.Doctors.FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted);
-            if (toUpdate is null) return;
+            var toUpdate = await context.Doctors
+                .FirstOrDefaultAsync(d => d.DoctorId == doctorId && !d.IsDeleted);
 
             toUpdate.FirstName = doctor.FirstName;
             toUpdate.LastName = doctor.LastName;
@@ -38,27 +38,29 @@ namespace ClinicAPI.Repositories
             toUpdate.Age = doctor.Age;
             toUpdate.YearOfExperience = doctor.YearOfExperience;
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
-        public bool DeleteDoctorById(int doctorId)
+        public async Task<bool> DeleteDoctorByIdAsync(int doctorId)
         {
-            var toDelete = context.Doctors.FirstOrDefault(d => d.DoctorId == doctorId && !d.IsDeleted);
+            var toDelete = await context.Doctors
+                .FirstOrDefaultAsync(d => d.DoctorId == doctorId && !d.IsDeleted);
+
             if (toDelete is null) return false;
 
             toDelete.IsDeleted = true;
-            context.SaveChanges();
+            await context.SaveChangesAsync();
             return true;
         }
 
-        public int GetDoctorCount()
+        public async Task<int> GetDoctorCountAsync()
         {
-            return context.Doctors.Count(d => !d.IsDeleted);
+            return await context.Doctors.CountAsync(d => !d.IsDeleted);
         }
 
-        public List<Doctor> GetDoctorPage(int page, int pageSize)
+        public async Task<List<Doctor>> GetDoctorPageAsync(int page, int pageSize)
         {
-            return context.Doctors
+            return await context.Doctors
                 .AsNoTracking()
                 .Where(d => !d.IsDeleted)
                 .Include(d => d.DoctorAppointments)
@@ -66,16 +68,16 @@ namespace ClinicAPI.Repositories
                 .OrderBy(d => d.FirstName)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToList();
+                .ToListAsync();
         }
 
-        public List<Appointment> GetAppointment(int doctorId)
+        public async Task<List<Appointment>> GetAppointmentAsync(int doctorId)
         {
-            return context.Appointments
+            return await context.Appointments
                 .AsNoTracking()
                 .Where(a => !a.IsDeleted && a.DoctorId == doctorId)
                 .OrderBy(a => a.Date)
-                .ToList();
+                .ToListAsync();
         }
     }
 }

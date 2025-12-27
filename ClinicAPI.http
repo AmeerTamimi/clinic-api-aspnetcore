@@ -47,10 +47,10 @@ DELETE {{baseUrl}}/patients/12
 GET {{baseUrl}}/doctors?page=1&pageSize=10&IncludePatients=true&includeAppointments=true
 
 ###
-GET {{baseUrl}}/doctors/2?includeAppointments=true
+GET {{baseUrl}}/doctors/2?includePatients=true
 
 ###
-GET {{baseUrl}}/doctors/2/patients?includeAppointments=false
+GET {{baseUrl}}/doctors/2/patients?includeAppointments=true
 
 ###
 GET {{baseUrl}}/doctors/2/patients?includeAppointments=true

@@ -12,16 +12,17 @@ namespace ClinicAPI.Service
         private readonly IAppointmentRepo _appointmentRepo;
         private readonly IPatientRepo _patientRepo;
         private readonly IDoctorRepo _doctorRepo;
-        public AppointmentService(IAppointmentRepo appointmentRepo , IPatientRepo patientRepo , IDoctorRepo doctorRepo)
+
+        public AppointmentService(IAppointmentRepo appointmentRepo, IPatientRepo patientRepo, IDoctorRepo doctorRepo)
         {
             _appointmentRepo = appointmentRepo;
             _patientRepo = patientRepo;
             _doctorRepo = doctorRepo;
         }
 
-        public AppointmentResponse GetAppointmentById(int appointmentId)
+        public async Task<AppointmentResponse> GetAppointmentByIdAsync(int appointmentId)
         {
-            var appointment = _appointmentRepo.GetAppointmentById(appointmentId);
+            var appointment = await _appointmentRepo.GetAppointmentByIdAsync(appointmentId);
 
             if (appointment is null)
                 throw new NotFoundException("Appointment Does Not Exist");
@@ -29,45 +30,46 @@ namespace ClinicAPI.Service
             return AppointmentResponse.FromModel(appointment);
         }
 
-        public AppointmentResponse AddNewAppointment(CreateAppointmentRequest appointmentRequest)
+        public async Task<AppointmentResponse> AddNewAppointmentAsync(CreateAppointmentRequest appointmentRequest)
         {
-            IsValidAppointment(appointmentRequest);
+            await IsValidAppointmentAsync(appointmentRequest);
 
             var appointment = FromCreateRequestToModel(appointmentRequest);
 
-            if (_appointmentRepo.HasAppointmentConflict(appointment))
+            if (await _appointmentRepo.HasAppointmentConflictAsync(appointment))
                 throw new ConflictException("Appointment Conflict , Change the Date");
 
-            var created = _appointmentRepo.AddNewAppointment(appointment);
+            var created = await _appointmentRepo.AddNewAppointmentAsync(appointment);
 
             return AppointmentResponse.FromModel(created);
         }
 
-        public void UpdateAppointment(UpdateAppointmentRequest appointmentRequest, int appointmentId)
+        public async Task UpdateAppointmentAsync(UpdateAppointmentRequest appointmentRequest, int appointmentId)
         {
-            IsValidAppointment(appointmentRequest, appointmentId);
+            await IsValidAppointmentAsync(appointmentRequest, appointmentId);
 
             var appointment = FromUpdateRequestToModel(appointmentRequest, appointmentId);
 
-            if (_appointmentRepo.HasAppointmentConflict(appointment))
+            if (await _appointmentRepo.HasAppointmentConflictAsync(appointment))
                 throw new ConflictException("Appointment Conflict , Change the Date");
-
-            _appointmentRepo.UpdateAppointment(appointment, appointmentId);
         }
 
-        public AppointmentResponse DeleteAppointmentById(int appointmentId)
+        public async Task<AppointmentResponse> DeleteAppointmentByIdAsync(int appointmentId)
         {
-            var appointment = _appointmentRepo.GetAppointmentById(appointmentId);
+            var appointment = await _appointmentRepo.GetAppointmentByIdAsync(appointmentId);
 
             if (appointment is null)
                 throw new NotFoundException("Appointment Does Not Exist");
 
-            _appointmentRepo.DeleteAppointmentById(appointmentId);
+            var succeded = await _appointmentRepo.DeleteAppointmentByIdAsync(appointmentId);
+
+            if (!succeded)
+                throw new ServerException("Sorry, couldn't delete the Appointment");
 
             return AppointmentResponse.FromModel(appointment);
         }
 
-        public PagedResult<AppointmentResponse> GetAppointmentPage(AppointmentQuery query)
+        public async Task<PagedResult<AppointmentResponse>> GetAppointmentPageAsync(AppointmentQuery query)
         {
             int page = query.Page;
             int pageSize = query.PageSize;
@@ -75,40 +77,37 @@ namespace ClinicAPI.Service
             page = Math.Max(page, 1);
             pageSize = Math.Clamp(pageSize, 3, 100);
 
-            var items = _appointmentRepo.GetAppointmentPage(page, pageSize);
+            var items = await _appointmentRepo.GetAppointmentPageAsync(page, pageSize);
 
-            var itemsResponse = AppointmentResponse.FromModels(items , query);
+            var itemsResponse = AppointmentResponse.FromModels(items, query);
 
-            var totalItems = _appointmentRepo.GetAppointmentCount();
+            var totalItems = await _appointmentRepo.GetAppointmentCountAsync();
 
             return PagedResult<AppointmentResponse>.GetPagedItems(itemsResponse, totalItems, page, pageSize);
         }
 
-        private void IsValidAppointment(CreateAppointmentRequest appointmentRequest)
+        private async Task IsValidAppointmentAsync(CreateAppointmentRequest appointmentRequest)
         {
             if (appointmentRequest is null)
                 throw new ValidationException("Invalid Appointment");
 
             int patientId = appointmentRequest.PatientId;
-            if (_patientRepo.GetPatientById(patientId) is null)
+            if (await _patientRepo.GetPatientByIdAsync(patientId) is null)
                 throw new NotFoundException($"Patient With Id {patientId} Does Not Exist");
 
             int doctorId = appointmentRequest.DoctorId;
-            if (_doctorRepo.GetDoctorById(doctorId) is null)
+            if (await _doctorRepo.GetDoctorByIdAsync(doctorId) is null)
                 throw new NotFoundException($"Doctor With Id {doctorId} Does Not Exist");
-
         }
 
-        private void IsValidAppointment(UpdateAppointmentRequest appointmentRequest, int appointmentId)
+        private async Task IsValidAppointmentAsync(UpdateAppointmentRequest appointmentRequest, int appointmentId)
         {
-            var appointment = _appointmentRepo.GetAppointmentById(appointmentId);
+            var appointment = await _appointmentRepo.GetAppointmentByIdAsync(appointmentId);
             if (appointment is null)
                 throw new NotFoundException("Appointment Does Not Exist");
 
             if (appointmentRequest is null)
                 throw new ValidationException("Invalid Appointment");
-            
-
         }
 
         private Appointment FromCreateRequestToModel(CreateAppointmentRequest appointmentRequest)
