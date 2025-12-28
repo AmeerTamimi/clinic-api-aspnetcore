@@ -14,11 +14,19 @@ Built while following Eng. Issam’s ASP.NET Core Web API course, then extended 
 - Service layer (`I*Service` + `*Service`) for business flow + orchestration
 - Repository layer (`I*Repo` + `*Repo`) using **EF Core + DbContext** (real database)
 
+### Async + Cancellation
+- All endpoints are **async**
+- `CancellationToken` is accepted in controllers and **propagated** through services → repos → EF Core calls
+- EF Core async operations use `...Async(ct)` (e.g. `ToListAsync(ct)`, `SingleOrDefaultAsync(..., ct)`, `SaveChangesAsync(ct)`)
+
 ### Persistence (EF Core)
 - `ClinicDbContext` under `Persistence/`
 - Entity configurations per model using `IEntityTypeConfiguration<T>`
 - Seed data via `HasData(...)` in configurations
-- Relationships configured (Patient↔Appointments, Doctor↔Appointments, Patient↔Doctor)
+- Relationships configured:
+  - Patient ↔ Appointments
+  - Doctor ↔ Appointments
+  - Patient ↔ Doctor
 - Soft delete pattern via `IsDeleted`
 
 ### DTOs
@@ -40,7 +48,7 @@ Built while following Eng. Issam’s ASP.NET Core Web API course, then extended 
 - Query string: `?page=&pageSize=&includeAppointments=`
 - Body: JSON `application/json`
 
-> If `includeAppointments=true`, related appointments must be loaded using EF Core `Include(...)` (otherwise nav props stay empty).
+> If `includeAppointments=true`, related appointments are loaded using EF Core `Include(...)` (otherwise nav props stay empty).
 
 ---
 
@@ -51,26 +59,27 @@ Built while following Eng. Issam’s ASP.NET Core Web API course, then extended 
 - `GET /patients/{patientId:int}`
 - `GET /patients/{patientId:int}/appointments`
 - `POST /patients`
-- `PUT /patients/{id:int}`
+- `PUT /patients/{patientId:int}`
 - `DELETE /patients/{patientId:int}`
 
 ### Doctors
-- `GET /doctors` (via `DoctorSearchRequest`)
+- `GET /doctors?page=&pageSize=&includePatients=&includeAppointments=`
 - `GET /doctors/{doctorId:int}`
 - `GET /doctors/{doctorId:int}/patients?includeAppointments=`
 - `GET /doctors/{doctorId:int}/appointments`
 - `POST /doctors`
-- `PUT /doctors/{id:int}`
+- `PUT /doctors/{doctorId:int}`
 - `DELETE /doctors/{doctorId:int}`
 
 ### Appointments
 - `GET /appointments?page=&pageSize=`
 - `GET /appointments/{appointmentId:int}`
 - `POST /appointments`
-- `PUT /appointments/{id:int}`
+- `PUT /appointments/{appointmentId:int}`
 - `DELETE /appointments/{appointmentId:int}`
 
 ---
+
 ## Run
 
 ```bash

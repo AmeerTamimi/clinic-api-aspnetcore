@@ -4,7 +4,7 @@
 GET {{baseUrl}}/route-table
 
 ###
-GET {{baseUrl}}/patients?page=2&pageSize=5&includeAppointments=false
+GET {{baseUrl}}/patients?page=1&pageSize=7&includeAppointments=false
 
 ###
 GET {{baseUrl}}/patients?page=1&pageSize=10&includeAppointments=true

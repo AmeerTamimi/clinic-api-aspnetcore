@@ -6,27 +6,27 @@ namespace ClinicAPI.Repositories
 {
     public class AppointmentRepo(ClinicDbContext context) : IAppointmentRepo
     {
-        public async Task<Appointment?> GetAppointmentByIdAsync(int appointmentId)
+        public async Task<Appointment?> GetAppointmentByIdAsync(int appointmentId, CancellationToken ct = default)
         {
             return await context.Appointments
-                .SingleOrDefaultAsync(a => a.AppointmentId == appointmentId && !a.IsDeleted);
+                .SingleOrDefaultAsync(a => a.AppointmentId == appointmentId && !a.IsDeleted, ct);
         }
 
-        public async Task<Appointment> AddNewAppointmentAsync(Appointment newAppointment)
+        public async Task<Appointment> AddNewAppointmentAsync(Appointment newAppointment, CancellationToken ct = default)
         {
             newAppointment.CreatedAt = DateTimeOffset.UtcNow;
             newAppointment.IsDeleted = false;
 
-            await context.Appointments.AddAsync(newAppointment);
-            await context.SaveChangesAsync();
+            await context.Appointments.AddAsync(newAppointment, ct);
+            await context.SaveChangesAsync(ct);
 
             return newAppointment;
         }
 
-        public async Task UpdateAppointmentAsync(Appointment appointment, int appointmentId)
+        public async Task UpdateAppointmentAsync(Appointment appointment, int appointmentId, CancellationToken ct = default)
         {
             var toUpdate = await context.Appointments
-                .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId && !a.IsDeleted);
+                .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId && !a.IsDeleted, ct);
 
             toUpdate.DoctorId = appointment.DoctorId;
             toUpdate.PatientId = appointment.PatientId;
@@ -36,66 +36,66 @@ namespace ClinicAPI.Repositories
             toUpdate.Medicine = appointment.Medicine ?? toUpdate.Medicine;
             toUpdate.IsDone = appointment.IsDone;
 
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(ct);
         }
 
-        public async Task<bool> DeleteAppointmentByIdAsync(int appointmentId)
+        public async Task<bool> DeleteAppointmentByIdAsync(int appointmentId, CancellationToken ct = default)
         {
             var toDelete = await context.Appointments
-                .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId && !a.IsDeleted);
+                .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId && !a.IsDeleted, ct);
 
             if (toDelete is null) return false;
 
             toDelete.IsDeleted = true;
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(ct);
             return true;
         }
 
-        public async Task<int> GetAppointmentCountAsync()
+        public async Task<int> GetAppointmentCountAsync(CancellationToken ct = default)
         {
-            return await context.Appointments.CountAsync(a => !a.IsDeleted);
+            return await context.Appointments.CountAsync(a => !a.IsDeleted, ct);
         }
 
-        public async Task<List<Appointment>> GetAppointmentPageAsync(int page, int pageSize)
+        public async Task<List<Appointment>> GetAppointmentPageAsync(int page, int pageSize, CancellationToken ct = default)
         {
             return await context.Appointments
                 .AsNoTracking()
                 .Where(a => !a.IsDeleted)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync();
+                .ToListAsync(ct);
         }
 
-        public async Task<List<Appointment>> GetAppointmentByDoctorIdAsync(int doctorId)
+        public async Task<List<Appointment>> GetAppointmentByDoctorIdAsync(int doctorId, CancellationToken ct = default)
         {
             return await context.Appointments
                 .AsNoTracking()
                 .Where(a => !a.IsDeleted && a.DoctorId == doctorId)
-                .ToListAsync();
+                .ToListAsync(ct);
         }
 
-        public async Task<List<Appointment>> GetAppointmentByPatientIdAsync(int patientId)
+        public async Task<List<Appointment>> GetAppointmentByPatientIdAsync(int patientId, CancellationToken ct = default)
         {
             return await context.Appointments
                 .AsNoTracking()
                 .Where(a => !a.IsDeleted && a.PatientId == patientId)
-                .ToListAsync();
+                .ToListAsync(ct);
         }
 
-        public async Task<List<Appointment>> GetAppointmentByDateAsync(DateTimeOffset from, DateTimeOffset to)
+        public async Task<List<Appointment>> GetAppointmentByDateAsync(DateTimeOffset from, DateTimeOffset to, CancellationToken ct = default)
         {
             return await context.Appointments
                 .AsNoTracking()
                 .Where(a => !a.IsDeleted && a.Date >= from && a.Date <= to)
-                .ToListAsync();
+                .ToListAsync(ct);
         }
 
-        public async Task<bool> HasAppointmentConflictAsync(Appointment appointment)
+        public async Task<bool> HasAppointmentConflictAsync(Appointment appointment, CancellationToken ct = default)
         {
             return await context.Appointments
                 .AnyAsync(a => !a.IsDeleted && !a.IsDone
                     && (a.DoctorId == appointment.DoctorId || a.PatientId == appointment.PatientId)
-                    && a.Date == appointment.Date);
+                    && a.Date == appointment.Date, ct);
         }
     }
 }

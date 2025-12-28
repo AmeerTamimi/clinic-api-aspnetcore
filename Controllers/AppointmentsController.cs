@@ -10,23 +10,23 @@ namespace ClinicAPI.Controllers
     public class AppointmentsController(IAppointmentService _appointmentService) : ControllerBase
     {
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] AppointmentQuery query)
+        public async Task<IActionResult> GetAll([FromQuery] AppointmentQuery query, CancellationToken ct)
         {
-            var appointments = await _appointmentService.GetAppointmentPageAsync(query);
+            var appointments = await _appointmentService.GetAppointmentPageAsync(query, ct);
             return Ok(appointments);
         }
 
         [HttpGet("{appointmentId:int}")]
-        public async Task<IActionResult> GetById([FromRoute] int appointmentId)
+        public async Task<IActionResult> GetById([FromRoute] int appointmentId, CancellationToken ct)
         {
-            var appointment = await _appointmentService.GetAppointmentByIdAsync(appointmentId);
+            var appointment = await _appointmentService.GetAppointmentByIdAsync(appointmentId, ct);
             return Ok(appointment);
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddAppointment([FromBody] CreateAppointmentRequest createRequest)
+        public async Task<IActionResult> AddAppointment([FromBody] CreateAppointmentRequest createRequest, CancellationToken ct)
         {
-            var appointment = await _appointmentService.AddNewAppointmentAsync(createRequest);
+            var appointment = await _appointmentService.AddNewAppointmentAsync(createRequest, ct);
 
             return Created(
                 $"Appointment With Patient Id : {appointment.PatientId} ,Doctor Id :{appointment.DoctorId} Was created ",
@@ -35,16 +35,16 @@ namespace ClinicAPI.Controllers
         }
 
         [HttpPut("{appointmentId:int}")]
-        public async Task<IActionResult> UpdateAppointment([FromBody] UpdateAppointmentRequest updateRequest, int appointmentId)
+        public async Task<IActionResult> UpdateAppointment([FromBody] UpdateAppointmentRequest updateRequest, int appointmentId, CancellationToken ct)
         {
-            await _appointmentService.UpdateAppointmentAsync(updateRequest, appointmentId);
+            await _appointmentService.UpdateAppointmentAsync(updateRequest, appointmentId, ct);
             return NoContent();
         }
 
         [HttpDelete("{appointmentId:int}")]
-        public async Task<IActionResult> DeleteAppointmentById([FromRoute] int appointmentId)
+        public async Task<IActionResult> DeleteAppointmentById([FromRoute] int appointmentId, CancellationToken ct)
         {
-            var appointment = await _appointmentService.DeleteAppointmentByIdAsync(appointmentId);
+            var appointment = await _appointmentService.DeleteAppointmentByIdAsync(appointmentId, ct);
             return Ok(appointment);
         }
     }

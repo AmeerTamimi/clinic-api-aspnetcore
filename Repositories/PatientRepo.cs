@@ -6,29 +6,29 @@ namespace ClinicAPI.Repositories
 {
     public class PatientRepo(ClinicDbContext context) : IPatientRepo
     {
-        public async Task<Patient?> GetPatientByIdAsync(int patientId)
+        public async Task<Patient?> GetPatientByIdAsync(int patientId, CancellationToken ct = default)
         {
             return await context.Patients
                 .AsNoTracking()
                 .Include(p => p.PatientAppointments)
-                .SingleOrDefaultAsync(p => !p.IsDeleted && p.PatientId == patientId);
+                .SingleOrDefaultAsync(p => !p.IsDeleted && p.PatientId == patientId , ct);
         }
 
-        public async Task<Patient> AddNewPatientAsync(Patient newPatient)
+        public async Task<Patient> AddNewPatientAsync(Patient newPatient, CancellationToken ct = default)
         {
             newPatient.CreatedAt = DateTimeOffset.UtcNow;
             newPatient.IsDeleted = false;
 
-            await context.Patients.AddAsync(newPatient);
-            await context.SaveChangesAsync();
+            await context.Patients.AddAsync(newPatient, ct);
+            await context.SaveChangesAsync(ct);
 
             return newPatient;
         }
 
-        public async Task<bool> UpdatePatientAsync(Patient updatedPatient)
+        public async Task<bool> UpdatePatientAsync(Patient updatedPatient, CancellationToken ct = default)
         {
             var patientToUpdate = await context.Patients
-                .FirstOrDefaultAsync(p => !p.IsDeleted && p.PatientId == updatedPatient.PatientId);
+                .FirstOrDefaultAsync(p => !p.IsDeleted && p.PatientId == updatedPatient.PatientId, ct);
 
             if (patientToUpdate is null)
                 return false;
@@ -38,35 +38,35 @@ namespace ClinicAPI.Repositories
             patientToUpdate.Age = updatedPatient.Age;
             patientToUpdate.DoctorId = updatedPatient.DoctorId;
 
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(ct);
             return true;
         }
 
-        public async Task<bool> DeletePatientByIdAsync(int patientId)
+        public async Task<bool> DeletePatientByIdAsync(int patientId, CancellationToken ct = default)
         {
-            var toDelete = await context.Patients.FirstOrDefaultAsync(p => p.PatientId == patientId && !p.IsDeleted);
+            var toDelete = await context.Patients.FirstOrDefaultAsync(p => p.PatientId == patientId && !p.IsDeleted, ct);
             if (toDelete is null) return false;
 
             toDelete.IsDeleted = true;
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(ct);
             return true;
         }
 
-        public async Task<List<Patient>> GetPatientByDoctorAsync(Doctor doctor)
+        public async Task<List<Patient>> GetPatientByDoctorAsync(Doctor doctor, CancellationToken ct = default)
         {
             return await context.Patients
                 .AsNoTracking()
                 .Include(p => p.PatientAppointments)
                 .Where(p => !p.IsDeleted && p.DoctorId == doctor.DoctorId)
-                .ToListAsync();
+                .ToListAsync(ct);
         }
 
-        public async Task<int> GetPatientCountAsync()
+        public async Task<int> GetPatientCountAsync(CancellationToken ct = default)
         {
-            return await context.Patients.CountAsync(p => !p.IsDeleted);
+            return await context.Patients.CountAsync(p => !p.IsDeleted , ct);
         }
 
-        public async Task<List<Patient>> GetPatientPageAsync(int page, int pageSize)
+        public async Task<List<Patient>> GetPatientPageAsync(int page, int pageSize, CancellationToken ct = default)
         {
             return await context.Patients
                 .AsNoTracking()
@@ -75,7 +75,7 @@ namespace ClinicAPI.Repositories
                 .OrderBy(p => p.PatientId)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
-                .ToListAsync();
+                .ToListAsync(ct);
         }
     }
 }

@@ -119,11 +119,5 @@ app.MapGet("/route-table", (IServiceProvider sp) =>
     return Results.Ok(endpoints);
 });
 
-app.MapGet("/__whoami", () => new {
-    App = AppDomain.CurrentDomain.FriendlyName,
-    Dir = AppContext.BaseDirectory
-});
-
-
 app.Run();
 

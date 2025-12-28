@@ -6,10 +6,10 @@ namespace ClinicAPI.Service
 {
     public interface IAppointmentService
     {
-        Task<AppointmentResponse> GetAppointmentByIdAsync(int appointmentId);
-        Task<AppointmentResponse> AddNewAppointmentAsync(CreateAppointmentRequest newAppointment);
-        Task UpdateAppointmentAsync(UpdateAppointmentRequest appointment, int appointmentId);
-        Task<AppointmentResponse> DeleteAppointmentByIdAsync(int appointmentId);
-        Task<PagedResult<AppointmentResponse>> GetAppointmentPageAsync(AppointmentQuery query);
+        Task<AppointmentResponse> GetAppointmentByIdAsync(int appointmentId, CancellationToken ct = default);
+        Task<AppointmentResponse> AddNewAppointmentAsync(CreateAppointmentRequest newAppointment, CancellationToken ct = default);
+        Task UpdateAppointmentAsync(UpdateAppointmentRequest appointment, int appointmentId, CancellationToken ct = default);
+        Task<AppointmentResponse> DeleteAppointmentByIdAsync(int appointmentId, CancellationToken ct = default);
+        Task<PagedResult<AppointmentResponse>> GetAppointmentPageAsync(AppointmentQuery query, CancellationToken ct = default);
     }
 }
