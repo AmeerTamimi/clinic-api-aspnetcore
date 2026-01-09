@@ -1,4 +1,4 @@
-﻿namespace ClinicAPI.Configuration
+﻿namespace ClinicAPI.Configurations
 {
     public class ClinicSettings
     {

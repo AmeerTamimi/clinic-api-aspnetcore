@@ -18,14 +18,14 @@ namespace ClinicAPI.Service
             _appointmentRepo = appointmentRepo;
         }
 
-        public async Task<PatientResponse> GetPatientByIdAsync(int patientId , PatientQuery query, CancellationToken ct = default)
+        public async Task<PatientResponse> GetPatientByIdAsync(int patientId , bool includeAppointments = false, CancellationToken ct = default)
         {
             var patient = await _patientRepo.GetPatientByIdAsync(patientId, ct);
 
             if (patient is null)
                 throw new NotFoundException("Patient Not Found");
 
-            return PatientResponse.FromModel(patient, query.IncludeAppointments);
+            return PatientResponse.FromModel(patient, includeAppointments);
         }
 
         public async Task<PatientResponse> AddNewPatientAsync(CreatePatientRequest patientRequest, CancellationToken ct = default)

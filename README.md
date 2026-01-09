@@ -6,49 +6,51 @@ Built while following Eng. Issam’s ASP.NET Core Web API course, then extended 
 
 ---
 
-## What’s implemented
+## What’s implemented 
 
 ### Core API
-- Controllers: **Patients**, **Doctors**, **Appointments**
-- Domain models: **Patient**, **Doctor**, **Appointment**
+- Controllers: **Patients**, **Doctors**, **Appointments**, **Tokens**
+- Domain models: **Patient**, **Doctor**, **Appointment**, **User**, **RefreshTokenModel**
 - Service layer (`I*Service` + `*Service`) for business flow + orchestration
-- Repository layer (`I*Repo` + `*Repo`) using **EF Core + DbContext** (real database)
+- Repository layer (`I*Repo` + `*Repo`) using **EF Core + DbContext**
+
+### Security (JWT) 
+- **JWT Bearer authentication**
+- **Access token** support (used to call secured endpoints)
+- **Refresh token model** exists (`Models/RefreshTokenModel.cs`)
+- Policy-based authorization using permissions (`Permissions/Permission.cs`) + registrations
+
+> If you call a secured endpoint without a valid access token → **401 Unauthorized** ❌
 
 ### Async + Cancellation
 - All endpoints are **async**
-- `CancellationToken` is accepted in controllers and **propagated** through services → repos → EF Core calls
-- EF Core async operations use `...Async(ct)` (e.g. `ToListAsync(ct)`, `SingleOrDefaultAsync(..., ct)`, `SaveChangesAsync(ct)`)
+- `CancellationToken` flows from controllers → services → repos → EF Core calls
+- EF Core async operations use `...Async(ct)` (e.g. `ToListAsync(ct)`, `SaveChangesAsync(ct)`)
 
 ### Persistence (EF Core)
-- `ClinicDbContext` under `Persistence/`
-- Entity configurations per model using `IEntityTypeConfiguration<T>`
-- Seed data via `HasData(...)` in configurations
-- Relationships configured:
-  - Patient ↔ Appointments
-  - Doctor ↔ Appointments
-  - Patient ↔ Doctor
-- Soft delete pattern via `IsDeleted`
+- `ClinicDbContext` under `Persistence/ClinicDbContext.cs`
+- Migrations under `Persistence/Migrations/`
+- Entity configs under `Persistence/DbConfigurations/`
 
 ### DTOs
-- `Requests/` for create/update contracts  
-- `Query/` for query contracts  
-- `Responses/` for output DTOs + mapping (`FromModel`) + paging results
+- `Requests/` for create/update + token requests
+- `Query/` for query contracts (paging/filtering inputs)
+- `Responses/` for output DTOs + paging wrapper (`PagedResult`)
 
 ### Validation + Error Handling
 - Validation: **FluentValidation** (`Validators/`)
-- Error handling: custom exceptions + global exception handler (`CustomExceptions/`)
+- Error handling: custom exceptions + global exception handler (`CustomExceptions/GlobalExceptionHandler.cs`)
 - Pagination support for list endpoints
-- Helper endpoint: `GET /route-table`
 - HTTP test file: `ClinicAPI.http`
 
 ---
 
-## Model binding quick notes
-- Route params: `/{id:int}`
-- Query string: `?page=&pageSize=&includeAppointments=`
-- Body: JSON `application/json`
+## Options Pattern
+Configuration is strongly-typed and isolated in `Configurations/`:
+- `ClinicSettings.cs`
+- `JwtSettings.cs`
 
-> If `includeAppointments=true`, related appointments are loaded using EF Core `Include(...)` (otherwise nav props stay empty).
+This keeps config clean, avoids magic strings, and makes Program.cs lighter.
 
 ---
 
@@ -77,6 +79,9 @@ Built while following Eng. Issam’s ASP.NET Core Web API course, then extended 
 - `POST /appointments`
 - `PUT /appointments/{appointmentId:int}`
 - `DELETE /appointments/{appointmentId:int}`
+
+### Tokens
+- Token endpoints exist under `TokensController` (see `Controllers/TokensController.cs` / `ClinicAPI.http`)
 
 ---
 

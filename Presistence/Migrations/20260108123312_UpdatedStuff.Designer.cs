@@ -3,6 +3,7 @@ using System;
 using ClinicAPI.Presistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicAPI.Presistence.Migrations
 {
     [DbContext(typeof(ClinicDbContext))]
-    partial class ClinicDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260108123312_UpdatedStuff")]
+    partial class UpdatedStuff
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.11");
@@ -459,9 +462,6 @@ namespace ClinicAPI.Presistence.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("RefreshTokenHash")
-                        .HasColumnType("TEXT");
-
                     b.PrimitiveCollection<string>("Roles")
                         .IsRequired()
                         .HasColumnType("TEXT");
@@ -625,25 +625,6 @@ namespace ClinicAPI.Presistence.Migrations
                         });
                 });
 
-            modelBuilder.Entity("ClinicAPI.Models.RefreshTokenModel", b =>
-                {
-                    b.Property<string>("RefreshTokenHash")
-                        .HasColumnType("TEXT");
-
-                    b.Property<DateTime>("Expires")
-                        .HasColumnType("TEXT");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("INTEGER");
-
-                    b.HasKey("RefreshTokenHash");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.ToTable("RefreshToken", (string)null);
-                });
-
             modelBuilder.Entity("ClinicAPI.Models.Appointment", b =>
                 {
                     b.HasOne("ClinicAPI.Models.Doctor", "Doctor")
@@ -674,17 +655,6 @@ namespace ClinicAPI.Presistence.Migrations
                     b.Navigation("Doctor");
                 });
 
-            modelBuilder.Entity("ClinicAPI.Models.RefreshTokenModel", b =>
-                {
-                    b.HasOne("ClinicAPI.Models.Patient", "Patient")
-                        .WithOne("RefreshToken")
-                        .HasForeignKey("ClinicAPI.Models.RefreshTokenModel", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Patient");
-                });
-
             modelBuilder.Entity("ClinicAPI.Models.Doctor", b =>
                 {
                     b.Navigation("DoctorAppointments");
@@ -695,8 +665,6 @@ namespace ClinicAPI.Presistence.Migrations
             modelBuilder.Entity("ClinicAPI.Models.Patient", b =>
                 {
                     b.Navigation("PatientAppointments");
-
-                    b.Navigation("RefreshToken");
                 });
 #pragma warning restore 612, 618
         }

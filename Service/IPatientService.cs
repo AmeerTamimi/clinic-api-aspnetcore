@@ -7,7 +7,7 @@ namespace ClinicAPI.Service
 {
     public interface IPatientService
     {
-        Task<PatientResponse> GetPatientByIdAsync(int patientId , PatientQuery query, CancellationToken ct = default);
+        Task<PatientResponse> GetPatientByIdAsync(int patientId , bool includeAppointments = false, CancellationToken ct = default);
         Task<PatientResponse> AddNewPatientAsync(CreatePatientRequest newPatient, CancellationToken ct = default);
         Task UpdatePatientAsync(UpdatePatientRequest patient , int patientId, CancellationToken ct = default);
         Task<PatientResponse> DeletePatientAsync(int patientId, CancellationToken ct = default);

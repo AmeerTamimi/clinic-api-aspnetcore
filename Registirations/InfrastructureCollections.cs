@@ -1,7 +1,6 @@
 ﻿using ClinicAPI.Repositories;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace ClinicAPI.GroupedRegistirations
+namespace ClinicAPI.Registirations
 {
     public static class InfrastructureCollections
     {
@@ -10,6 +9,7 @@ namespace ClinicAPI.GroupedRegistirations
             services.AddScoped<IAppointmentRepo, AppointmentRepo>();
             services.AddScoped<IDoctorRepo, DoctorRepo>();
             services.AddScoped<IPatientRepo, PatientRepo>();
+            services.AddScoped<IRefreshTokenRepo, RefreshTokenRepo>();
 
             return services;
         }

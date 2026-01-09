@@ -2,7 +2,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
 
-namespace ClinicAPI.GroupedRegistirations
+namespace ClinicAPI.Registirations
 {
     public static class ValidatorsCollection
     {

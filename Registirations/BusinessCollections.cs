@@ -1,7 +1,6 @@
 ﻿using ClinicAPI.Service;
-using Microsoft.Extensions.DependencyInjection;
 
-namespace ClinicAPI.GroupedRegistirations
+namespace ClinicAPI.Registirations
 {
     public static class BusinessCollections
     {
@@ -10,6 +9,7 @@ namespace ClinicAPI.GroupedRegistirations
             services.AddScoped<IAppointmentService, AppointmentService>();
             services.AddScoped<IPatientService, PatientService>();
             services.AddScoped<IDoctorService, DoctorService>();
+            services.AddScoped<IJwtTokenService, JwtTokenService>();
 
             return services;
         }

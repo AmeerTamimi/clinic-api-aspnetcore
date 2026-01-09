@@ -23,7 +23,9 @@ Content-Type: application/json
   "firstName": "Ibrahim",
   "lastName": "Hammouda",
   "age": 20,
-  "doctorId" : 1
+  "doctorId" : 1,
+  "Email" : "ib@gmail.com",
+  "Password" : "12345"
 }
 
 ###
@@ -45,9 +47,11 @@ DELETE {{baseUrl}}/patients/12
 
 ###
 GET {{baseUrl}}/doctors?page=1&pageSize=10&IncludePatients=true&includeAppointments=true
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZ2l2ZW5fbmFtZSI6IkFtZWVyIiwiTGFzdE5hbWUiOiJUYW1pbWkiLCJlbWFpbCI6ImFAZ21haWwuY29tIiwicm9sZSI6IlBhdGllbnQiLCJwZXJtaXNzaW9uIjpbInBhdGllbnQ6cmVhZCIsInBhdGllbnQ6Y3JlYXRlIiwicGF0aWVudDp1cGRhdGUiLCJwYXRpZW50OmRlbGV0ZSIsInBhdGllbnQ6cmVhZC1hcHBvaW50bWVudHMiLCJwYXRpZW50Om1hbmFnZS1kb2N0b3IiLCJwYXRpZW50Om1hbmFnZS1hcHBvaW50bWVudHMiLCJkb2N0b3I6cmVhZCIsImRvY3RvcjpjcmVhdGUiLCJkb2N0b3I6dXBkYXRlIiwiZG9jdG9yOmRlbGV0ZSIsImRvY3RvcjpyZWFkLXBhdGllbnRzIiwiZG9jdG9yOnJlYWQtYXBwb2ludG1lbnRzIiwiZG9jdG9yOmRlbGV0ZS1wYXRpZW50IiwiZG9jdG9yOmFkZC1wYXRpZW50IiwiZG9jdG9yOnVwZGF0ZS1zcGVjaWFsdHkiLCJhcHBvaW50bWVudDpyZWFkIiwiYXBwb2ludG1lbnQ6Y3JlYXRlIiwiYXBwb2ludG1lbnQ6dXBkYXRlIiwiYXBwb2ludG1lbnQ6ZGVsZXRlIiwiYXBwb2ludG1lbnQ6dXBkYXRlLXN0YXR1cyIsImFwcG9pbnRtZW50Om1hbmFnZS1wYXRpZW50IiwiYXBwb2ludG1lbnQ6bWFuYWdlLWRvY3RvciIsImFwcG9pbnRtZW50OnVwZGF0ZS1kYXRlIl0sIm5iZiI6MTc2Nzk2NzMxNSwiZXhwIjoxNzY3OTY3Mzc1LCJpYXQiOjE3Njc5NjczMTUsImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdCJ9.5aCfltAGRNU36WUB79RMbxTWmr6ubUv4ciqsapHdwtY
 
 ###
 GET {{baseUrl}}/doctors/2?includePatients=true
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwiZ2l2ZW5fbmFtZSI6IkFtZWVyIiwiTGFzdE5hbWUiOiJUYW1pbWkiLCJlbWFpbCI6ImFAZ21haWwuY29tIiwicm9sZSI6IlBhdGllbnQiLCJwZXJtaXNzaW9uIjpbInBhdGllbnQ6cmVhZCIsInBhdGllbnQ6Y3JlYXRlIiwicGF0aWVudDp1cGRhdGUiLCJwYXRpZW50OmRlbGV0ZSIsInBhdGllbnQ6cmVhZC1hcHBvaW50bWVudHMiLCJwYXRpZW50Om1hbmFnZS1kb2N0b3IiLCJwYXRpZW50Om1hbmFnZS1hcHBvaW50bWVudHMiLCJkb2N0b3I6cmVhZCIsImRvY3RvcjpjcmVhdGUiLCJkb2N0b3I6dXBkYXRlIiwiZG9jdG9yOmRlbGV0ZSIsImRvY3RvcjpyZWFkLXBhdGllbnRzIiwiZG9jdG9yOnJlYWQtYXBwb2ludG1lbnRzIiwiZG9jdG9yOmRlbGV0ZS1wYXRpZW50IiwiZG9jdG9yOmFkZC1wYXRpZW50IiwiZG9jdG9yOnVwZGF0ZS1zcGVjaWFsdHkiLCJhcHBvaW50bWVudDpyZWFkIiwiYXBwb2ludG1lbnQ6Y3JlYXRlIiwiYXBwb2ludG1lbnQ6dXBkYXRlIiwiYXBwb2ludG1lbnQ6ZGVsZXRlIiwiYXBwb2ludG1lbnQ6dXBkYXRlLXN0YXR1cyIsImFwcG9pbnRtZW50Om1hbmFnZS1wYXRpZW50IiwiYXBwb2ludG1lbnQ6bWFuYWdlLWRvY3RvciIsImFwcG9pbnRtZW50OnVwZGF0ZS1kYXRlIl0sIm5iZiI6MTc2Nzg4MTY5MywiZXhwIjoxNzY3ODgxOTkzLCJpYXQiOjE3Njc4ODE2OTMsImlzcyI6ImxvY2FsaG9zdCIsImF1ZCI6ImxvY2FsaG9zdCJ9.QfCPwZycr2pIaVjmENrVKdo_WlE-ZeUmQGxqfyp-Fk4
 
 ###
 GET {{baseUrl}}/doctors/2/patients?includeAppointments=true
@@ -117,4 +121,28 @@ Content-Type: application/json
   "symptoms": "Blurred vision",
   "diagnostic": "Dry eye",
   "medicine": "Eye drops"
+}
+
+
+
+###
+POST {{baseUrl}}/tokens/generate
+Content-Type: application/json
+
+{
+  "UserId" : 1,
+  "FirstName" : "Ameer",
+  "LastName" : "Tamimi",
+  "Type" : "Patient",
+  "Email" : "a@gmail.com",
+  "Phone" : "0569102566",
+  "Password" : "HASH"
+}
+
+###
+POST {{baseUrl}}/tokens/refresh-token/1
+Content-Type: application/json
+
+{
+  "RefreshToken" : "RefreshToken"
 }
