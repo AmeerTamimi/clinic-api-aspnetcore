@@ -1,4 +1,5 @@
-﻿using ClinicAPI.Models;
+﻿using ClinicAPI.Enums;
+using ClinicAPI.Models;
 using ClinicAPI.Permissions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
@@ -14,100 +15,62 @@ namespace ClinicAPI.Presistence.DbConfigurations
         {
             builder.ToTable("Patients");
 
-            builder.HasKey(p => p.PatientId);
+            //builder.HasKey(p => p.UserId);
 
             builder.HasOne(p => p.Doctor)
                    .WithMany(d => d.DoctorPatients)
                    .HasForeignKey(p => p.DoctorId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Property(p => p.FirstName)
-                   .IsRequired()
-                   .HasMaxLength(50);
-
-            builder.Property(p => p.LastName)
-                   .IsRequired()
-                   .HasMaxLength(50);
-
-            builder.Property(p => p.Email)
-                   .HasMaxLength(120);
-
-            builder.Property(p => p.Phone)
-                   .IsRequired()
-                   .HasMaxLength(20);
-
-            builder.Property(p => p.PasswordHash)
-                   .IsRequired()
-                   .HasMaxLength(200);
-
-            builder.Property(p => p.Age)
-                   .IsRequired();
-
+            
             builder.Property(p => p.DoctorId)
                    .IsRequired();
 
-            builder.Property(p => p.CreatedAt)
-                   .IsRequired();
 
-            builder.Property(p => p.IsDeleted)
-                   .HasDefaultValue(false);
 
-            builder.HasData(
-            [
+            List<User> patients = new()
+            {
                 new Patient
-                    {
-                        PatientId = 1,
-                        FirstName = "Ameer",
-                        LastName = "Tamimi",
-                        Email = "ameer.tamimi@clinic.test",
-                        Age = 20,
-                        Phone = "+970599001001",
-                        PasswordHash = "HASH",
-                        DoctorId = 7,
-                        Permissions =
-                        [
-                            Permission.Patient.Read,
-                            Permission.Patient.Create,
-                            Permission.Patient.Update,
-                            Permission.Patient.Delete,
-                            Permission.Patient.ReadAppointments,
-                            Permission.Patient.ManageDoctor,
-                            Permission.Patient.ManageAppointments,
+                {
+                    UserId = 11,
+                    Type = UserType.Patient,
+                    FirstName = "Khaled",
+                    LastName = "AbuSaleh",
+                    Email = "khaled.abusaleh@clinic.test",
+                    Age = 26,
+                    Phone = "+970599000011",
+                    PasswordHash = "PatientId11",
 
-                            Permission.Doctor.Read,
-                            Permission.Doctor.Create,
-                            Permission.Doctor.Update,
-                            Permission.Doctor.Delete,
-                            Permission.Doctor.ReadPatients,
-                            Permission.Doctor.ReadAppointments,
-                            Permission.Doctor.DeletePatient,
-                            Permission.Doctor.AddPatient,
-                            Permission.Doctor.UpdateSpecialty,
+                    DoctorId = 1,
 
-                            Permission.Appointment.Read,
-                            Permission.Appointment.Create,
-                            Permission.Appointment.Update,
-                            Permission.Appointment.Delete,
-                            Permission.Appointment.UpdateStatus,
-                            Permission.Appointment.ManagePatient,
-                            Permission.Appointment.ManageDoctor,
-                            Permission.Appointment.UpdateDate
-                        ],
-                        Roles = ["Patient"],
-                        CreatedAt = new DateTimeOffset(2025, 12, 13, 0, 0, 0, TimeSpan.Zero),
-                        IsDeleted = false
-                    },
+                    Allergies = "Penicillin",
+                    BloodType = (BloodType?)1,
+                    RiskLevel = (RiskLevel?)1,
+                    Note = "Asthma history",
 
-                new Patient { PatientId = 2,  FirstName = "Hareth", LastName = "Shoman",  Email = "hareth.shoman@clinic.test", Age = 21, Phone = "+970599001002", PasswordHash = "HASH", DoctorId = 2, Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 12, 14, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
-                new Patient { PatientId = 3,  FirstName = "Elyas",  LastName = "Najeh",   Email = "elyas.najeh@clinic.test",   Age = 22, Phone = "+970599001003", PasswordHash = "HASH", DoctorId = 3, Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 12, 15, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
-                new Patient { PatientId = 4,  FirstName = "Mariam", LastName = "Yasin",   Email = "mariam.yasin@clinic.test",  Age = 30, Phone = "+970599001004", PasswordHash = "HASH", DoctorId = 5, Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 12, 16, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
-                new Patient { PatientId = 5,  FirstName = "Kareem", LastName = "AbuLail", Email = "kareem.abulail@clinic.test",Age = 28, Phone = "+970599001005", PasswordHash = "HASH", DoctorId = 1, Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 12, 17, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
-                new Patient { PatientId = 6,  FirstName = "Noor",   LastName = "Said",    Email = "noor.said@clinic.test",     Age = 19, Phone = "+970599001006", PasswordHash = "HASH", DoctorId = 8, Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 12, 18, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
-                new Patient { PatientId = 7,  FirstName = "Zaid",   LastName = "Qamhieh", Email = "zaid.qamhieh@clinic.test",  Age = 23, Phone = "+970599001007", PasswordHash = "HASH", DoctorId = 4, Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 12, 19, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
-                new Patient { PatientId = 8,  FirstName = "Habeeb", LastName = "Ahmad",   Email = "habeeb.ahmad@clinic.test",  Age = 24, Phone = "+970599001008", PasswordHash = "HASH", DoctorId = 3, Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 12, 20, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
-                new Patient { PatientId = 9,  FirstName = "Waleed", LastName = "Noubani", Email = "waleed.noubani@clinic.test", Age = 26, Phone = "+970599001009", PasswordHash = "HASH", DoctorId = 7, Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 12, 21, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
-                new Patient { PatientId = 10, FirstName = "Ruba",   LastName = "Katout",  Email = "ruba.katout@clinic.test",   Age = 29, Phone = "+970599001010", PasswordHash = "HASH", DoctorId = 6, Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 12, 22, 0, 0, 0, TimeSpan.Zero), IsDeleted = false }
-            ]);
+                    Permissions =
+                    [
+                        Permission.Patient.Read,
+                        Permission.Patient.Update,
+                        Permission.Patient.ReadAppointments
+                    ],
+                    Roles = ["Patient"],
+                    CreatedAt = new DateTimeOffset(2025, 11, 1, 0, 0, 0, TimeSpan.Zero),
+                    IsDeleted = false
+                },
+
+                new Patient {UserId = 12, Type = UserType.Patient, FirstName = "Rami",   LastName = "Hassan",   Email = "rami.hassan@clinic.test",   Age = 31, Phone = "+970599000012", PasswordHash = "PatientId12", DoctorId = 1, Allergies = "Peanuts",        BloodType = (BloodType?)2, RiskLevel = (RiskLevel?)2, Note = "High BP monitoring", Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 11, 3, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
+                new Patient {UserId = 13, Type = UserType.Patient, FirstName = "Huda",   LastName = "Yasin",    Email = "huda.yasin@clinic.test",    Age = 22, Phone = "+970599000013", PasswordHash = "PatientId13", DoctorId = 2, Allergies = null,             BloodType = (BloodType?)1, RiskLevel = (RiskLevel?)0, Note = "Routine follow-up",     Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 11, 5, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
+                new Patient {UserId = 14, Type = UserType.Patient, FirstName = "Sami",   LastName = "Naji",     Email = "sami.naji@clinic.test",     Age = 44, Phone = "+970599000014", PasswordHash = "PatientId14", DoctorId = 3, Allergies = "Dust",           BloodType = (BloodType?)3, RiskLevel = (RiskLevel?)2, Note = "Joint pain",           Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 11, 8, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
+                new Patient {UserId = 15, Type = UserType.Patient, FirstName = "Mona",   LastName = "Sawalha",  Email = "mona.sawalha@clinic.test",  Age = 28, Phone = "+970599000015", PasswordHash = "PatientId15", DoctorId = 4, Allergies = "Latex",          BloodType = (BloodType?)2, RiskLevel = (RiskLevel?)1, Note = "Pediatric consult",    Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 11,10, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
+                new Patient {UserId = 16, Type = UserType.Patient, FirstName = "Tamer",  LastName = "Karmi",    Email = "tamer.karmi@clinic.test",    Age = 35, Phone = "+970599000016", PasswordHash = "PatientId16", DoctorId = 5, Allergies = null,             BloodType = (BloodType?)0, RiskLevel = (RiskLevel?)1, Note = "ENT check",            Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 11,13, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
+                new Patient {UserId = 17, Type = UserType.Patient, FirstName = "Aya",    LastName = "Mansour",  Email = "aya.mansour@clinic.test",  Age = 19, Phone = "+970599000017", PasswordHash = "PatientId17", DoctorId = 6, Allergies = "Seafood",        BloodType = (BloodType?)1, RiskLevel = (RiskLevel?)2, Note = "Neurology follow-up",  Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 11,16, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
+                new Patient {UserId = 18, Type = UserType.Patient, FirstName = "Bilal",  LastName = "Hamdan",   Email = "bilal.hamdan@clinic.test",   Age = 52, Phone = "+970599000018", PasswordHash = "PatientId18", DoctorId = 7, Allergies = "Aspirin",        BloodType = (BloodType?)3, RiskLevel = (RiskLevel?)2, Note = "Cardio check",          Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 11,19, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
+                new Patient {UserId = 19, Type = UserType.Patient, FirstName = "Noor",   LastName = "Zahran",   Email = "noor.zahran@clinic.test",   Age = 24, Phone = "+970599000019", PasswordHash = "PatientId19", DoctorId = 8, Allergies = null,             BloodType = (BloodType?)2, RiskLevel = (RiskLevel?)0, Note = "General visit",         Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 11,22, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
+                new Patient {UserId = 20, Type = UserType.Patient, FirstName = "Yara",   LastName = "Jabari",   Email = "yara.jabari@clinic.test",   Age = 30, Phone = "+970599000020", PasswordHash = "PatientId20", DoctorId = 9, Allergies = "Pollen",         BloodType = (BloodType?)1, RiskLevel = (RiskLevel?)1, Note = "Ortho follow-up",       Permissions = [], Roles = ["Patient"], CreatedAt = new DateTimeOffset(2025, 11,25, 0, 0, 0, TimeSpan.Zero), IsDeleted = false },
+            };
+
+            builder.HasData(patients);
         }
     }
 }

@@ -1,19 +1,13 @@
 ﻿using ClinicAPI.Enums;
 using ClinicAPI.Models;
 using ClinicAPI.Query;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace ClinicAPI.Responses
 {
-    public class DoctorResponse
+    public class DoctorResponse : UserResponse
     {
-        public int DoctorId { get; set; }
-        public string FirstName { get; set; } = default!;
-        public string LastName { get; set; } = default!;
+        
         public DoctorSpecialty Specialty { get; set; } = default!;
-        public int Age { get; set; }
-        public string Phone { get; set; }
+        public decimal Salary { get; set; }
         public int YearOfExperience { get; set; }
         public List<AppointmentResponse>? Appointments { get; set; }
         public List<PatientResponse>? Patients { get; set; }
@@ -23,7 +17,7 @@ namespace ClinicAPI.Responses
         public static DoctorResponse FromModel(Doctor doctor, bool includePatients, bool includeAppointments)
         {
             var doctorResponse = new DoctorResponse();
-            doctorResponse.DoctorId = doctor.DoctorId;
+            doctorResponse.UserId = doctor.UserId;
             doctorResponse.FirstName = doctor.FirstName;
             doctorResponse.LastName = doctor.LastName;
             doctorResponse.Specialty = doctor.Specialty;
@@ -38,7 +32,7 @@ namespace ClinicAPI.Responses
             if (doctor.DoctorAppointments != null && includeAppointments)
             {
                 Console.WriteLine($"LEngth : : : :: :{doctor.DoctorAppointments.Count()}");
-                doctorResponse.Appointments = doctor.DoctorAppointments.Where(a => a.DoctorId == doctorResponse.DoctorId)
+                doctorResponse.Appointments = doctor.DoctorAppointments.Where(a => a.DoctorUserId == doctorResponse.UserId)
                                                                    .Select(a => AppointmentResponse.FromModel(a))
                                                                    .ToList();
             }

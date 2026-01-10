@@ -11,7 +11,7 @@ namespace ClinicAPI.Repositories
             return await context.Patients
                 .AsNoTracking()
                 .Include(p => p.PatientAppointments)
-                .SingleOrDefaultAsync(p => !p.IsDeleted && p.PatientId == patientId , ct);
+                .SingleOrDefaultAsync(p => !p.IsDeleted && p.UserId == patientId , ct);
         }
 
         public async Task<Patient> AddNewPatientAsync(Patient newPatient, CancellationToken ct = default)
@@ -28,7 +28,7 @@ namespace ClinicAPI.Repositories
         public async Task<bool> UpdatePatientAsync(Patient updatedPatient, CancellationToken ct = default)
         {
             var patientToUpdate = await context.Patients
-                .FirstOrDefaultAsync(p => !p.IsDeleted && p.PatientId == updatedPatient.PatientId, ct);
+                .FirstOrDefaultAsync(p => !p.IsDeleted && p.UserId == updatedPatient.UserId, ct);
 
             if (patientToUpdate is null)
                 return false;
@@ -44,7 +44,7 @@ namespace ClinicAPI.Repositories
 
         public async Task<bool> DeletePatientByIdAsync(int patientId, CancellationToken ct = default)
         {
-            var toDelete = await context.Patients.FirstOrDefaultAsync(p => p.PatientId == patientId && !p.IsDeleted, ct);
+            var toDelete = await context.Patients.FirstOrDefaultAsync(p => p.UserId == patientId && !p.IsDeleted, ct);
             if (toDelete is null) return false;
 
             toDelete.IsDeleted = true;
@@ -57,7 +57,7 @@ namespace ClinicAPI.Repositories
             return await context.Patients
                 .AsNoTracking()
                 .Include(p => p.PatientAppointments)
-                .Where(p => !p.IsDeleted && p.DoctorId == doctor.DoctorId)
+                .Where(p => !p.IsDeleted && p.DoctorId == doctor.UserId)
                 .ToListAsync(ct);
         }
 
@@ -72,7 +72,7 @@ namespace ClinicAPI.Repositories
                 .AsNoTracking()
                 .Where(p => !p.IsDeleted)
                 .Include(p => p.PatientAppointments)
-                .OrderBy(p => p.PatientId)
+                .OrderBy(p => p.UserId)
                 .Skip((page - 1) * pageSize)
                 .Take(pageSize)
                 .ToListAsync(ct);

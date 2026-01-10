@@ -5,6 +5,7 @@ namespace ClinicAPI.Presistence
 {
     public class ClinicDbContext(DbContextOptions<ClinicDbContext> options) : DbContext(options)
     {
+        public DbSet<User> Users { get; set; }
         public DbSet<Patient> Patients { get; set; }
         public DbSet<Doctor> Doctors { get; set; }
         public DbSet<Appointment> Appointments { get; set; }

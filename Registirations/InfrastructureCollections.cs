@@ -10,6 +10,7 @@ namespace ClinicAPI.Registirations
             services.AddScoped<IDoctorRepo, DoctorRepo>();
             services.AddScoped<IPatientRepo, PatientRepo>();
             services.AddScoped<IRefreshTokenRepo, RefreshTokenRepo>();
+            services.AddScoped<UserRepo>();
 
             return services;
         }

@@ -11,14 +11,14 @@ namespace ClinicAPI.Controllers
         [HttpPost("generate")]
         public async Task<IActionResult> GetToken(JwtTokenRequest request)
         {
-            var token = _jwtService.GenerateAccessToken(request , "patient");
+            var token = await _jwtService.GenerateAccessToken(request);
             return Ok(token);
         }
 
-        [HttpPost("refresh-token/{userId:int}")]
-        public async Task<IActionResult> GetTokenFromRefreshToken([FromBody] RefreshTokenRequest request , int userId)
+        [HttpPost("refresh-token")]
+        public async Task<IActionResult> GetTokenFromRefreshToken([FromBody] RefreshTokenRequest request)
         {
-            var token = _jwtService.GenerateAccessTokenFromRefreshToken(request , userId);
+            var token = await _jwtService.GenerateAccessTokenFromRefreshToken(request);
             return Ok(token);
         }
     }

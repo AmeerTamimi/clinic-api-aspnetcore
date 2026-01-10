@@ -4,7 +4,7 @@ namespace ClinicAPI.Repositories
 {
     public interface IRefreshTokenRepo
     {
-        Task<RefreshTokenModel> GetRefreshTokenAsync(string refreshToken);
+        Task<RefreshTokenModel?> GetRefreshTokenAsync(string refreshTokenHash);
         Task AddRefreshTokenAsync(RefreshTokenModel refreshToken);
         Task DeleteRefreshTokenAsync(int userId);
     }

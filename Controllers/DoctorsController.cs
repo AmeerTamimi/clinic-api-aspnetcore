@@ -48,7 +48,7 @@ namespace ClinicAPI.Controllers
         public async Task<IActionResult> AddDoctor([FromBody] CreateDoctorRequest createRequest, CancellationToken ct)
         {
             var doctor = await _doctorService.AddNewDoctorAsync(createRequest, ct);
-            return Created($"Doctor With Id {doctor.DoctorId} Was Created", doctor);
+            return Created($"Doctor With Id {doctor.UserId} Was Created", doctor);
         }
 
         [HttpPut("{doctorId:int}")]

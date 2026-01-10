@@ -166,7 +166,7 @@ namespace ClinicAPI.Service
         {
             var doctor = new Doctor
             {
-                DoctorId = doctorId,
+                UserId = doctorId,
                 FirstName = doctorRequest.FirstName,
                 LastName = doctorRequest.LastName,
                 Specialty = doctorRequest.Specialty,

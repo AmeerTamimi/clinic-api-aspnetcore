@@ -20,8 +20,6 @@ namespace ClinicAPI.Validators
                 .NotEmpty().WithMessage("Appointment Date is required")
                 .Must(TodayOrFuture).WithMessage("Appointment Date can't be in the past");
         }
-
-
         private bool TodayOrFuture(DateTimeOffset date)
         {
             return date.UtcDateTime.Date >= DateTime.UtcNow.Date;

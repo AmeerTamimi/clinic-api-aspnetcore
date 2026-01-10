@@ -21,8 +21,8 @@ namespace ClinicAPI.Responses
             var appointmentResponse = new AppointmentResponse
             {
                 AppointmentId = appointment.AppointmentId,
-                PatientId = appointment.PatientId,
-                DoctorId = appointment.DoctorId,
+                PatientId = appointment.PatientUserId,
+                DoctorId = appointment.DoctorUserId,
                 Date = appointment.Date,
                 IsDone = appointment.IsDone,
                 Symptoms = appointment.Symptoms,

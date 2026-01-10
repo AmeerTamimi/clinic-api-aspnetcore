@@ -1,16 +1,15 @@
-﻿using ClinicAPI.Models;
+﻿using ClinicAPI.Enums;
+using ClinicAPI.Models;
 using ClinicAPI.Query;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace ClinicAPI.Responses
 {
-    public class PatientResponse
+    public class PatientResponse : UserResponse
     {
-        public int PatientId { get; set; }
-        public string FirstName { get; set; } = default!;
-        public string? LastName { get; set; }
-        public int Age { get; set; }
+        public RiskLevel RiskLevel { get; set; }
+        public BloodType BloodType { get; set; }
+        public string Allergies { get; set; }
+        public string Note { get; set; }
         public int DoctorId { get; set; }
         public List<AppointmentResponse>? Appointments { get; set; }
         private PatientResponse() { }
@@ -18,7 +17,7 @@ namespace ClinicAPI.Responses
         public static PatientResponse FromModel(Patient patient , bool includeAppointments)
         {
             var patientResponse = new PatientResponse();
-            patientResponse.PatientId = patient.PatientId;
+            patientResponse.UserId = patient.UserId;
             patientResponse.FirstName = patient.FirstName;
             patientResponse.LastName = patient.LastName;
             patientResponse.Age = patient.Age;
@@ -26,7 +25,7 @@ namespace ClinicAPI.Responses
             
             if(patient.PatientAppointments != null && includeAppointments)
             {
-                patientResponse.Appointments = patient.PatientAppointments.Where(a => a.PatientId == patientResponse.PatientId)
+                patientResponse.Appointments = patient.PatientAppointments.Where(a => a.PatientUserId == patientResponse.UserId)
                                                                    .Select(a => AppointmentResponse.FromModel(a))
                                                                    .ToList();
             }

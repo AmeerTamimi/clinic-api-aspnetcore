@@ -1,11 +1,13 @@
-﻿
+﻿using ClinicAPI.Enums;
+
 namespace ClinicAPI.Requests
 {
-    public class CreatePatientRequest
+    public class CreatePatientRequest : UserRequest
     {
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public int Age { get; set; }
+        public RiskLevel RiskLevel { get; set; }
+        public BloodType BloodType { get; set; }
+        public string? Allergies { get; set; }
+        public string? Note { get; set; }
         public int DoctorId { get; set; }
     }
 }

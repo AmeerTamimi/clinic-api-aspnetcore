@@ -114,8 +114,8 @@ namespace ClinicAPI.Service
         {
             var appointment = new Appointment
             {
-                PatientId = appointmentRequest.PatientId,
-                DoctorId = appointmentRequest.DoctorId,
+                PatientUserId = appointmentRequest.PatientId,
+                DoctorUserId = appointmentRequest.DoctorId,
                 Date = appointmentRequest.Date,
                 Symptoms = appointmentRequest.Symptoms,
                 Diagnostic = appointmentRequest.Diagnostic,
@@ -130,8 +130,8 @@ namespace ClinicAPI.Service
             var appointment = new Appointment
             {
                 AppointmentId = appointmentId,
-                PatientId = appointmentRequest.PatientId,
-                DoctorId = appointmentRequest.DoctorId,
+                PatientUserId = appointmentRequest.PatientId,
+                DoctorUserId = appointmentRequest.DoctorId,
                 Date = appointmentRequest.Date,
                 IsDone = appointmentRequest.IsDone,
                 Symptoms = appointmentRequest.Symptoms,

@@ -3,8 +3,8 @@
     public class Appointment
     {
         public int AppointmentId { get; set; }
-        public int PatientId { get; set; }
-        public int DoctorId { get; set; }
+        public int PatientUserId { get; set; }
+        public int DoctorUserId { get; set; }
         public bool IsDone { get; set; }
         public string Symptoms { get; set; }
         public string? Medicine { get; set; }

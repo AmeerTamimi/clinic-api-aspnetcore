@@ -15,18 +15,18 @@ namespace ClinicAPI.Presistence.DbConfigurations
 
             builder.HasOne(a => a.Patient)
                    .WithMany(p => p.PatientAppointments)
-                   .HasForeignKey(a => a.PatientId)
+                   .HasForeignKey(a => a.PatientUserId)
                    .OnDelete(DeleteBehavior.Restrict);
 
             builder.HasOne(a => a.Doctor)
                    .WithMany(d => d.DoctorAppointments)
-                   .HasForeignKey(a => a.DoctorId)
+                   .HasForeignKey(a => a.DoctorUserId)
                    .OnDelete(DeleteBehavior.Restrict);
 
-            builder.Property(a => a.PatientId)
+            builder.Property(a => a.PatientUserId)
                    .IsRequired();
 
-            builder.Property(a => a.DoctorId)
+            builder.Property(a => a.DoctorUserId)
                    .IsRequired();
 
             builder.Property(a => a.Symptoms)
@@ -56,16 +56,16 @@ namespace ClinicAPI.Presistence.DbConfigurations
 
             builder.HasData(
             [
-                new Appointment { AppointmentId = 1,  DoctorId = 7, PatientId = 1,  Date = date, Symptoms = "Headache",       IsDone = false, CreatedAt = baseCreatedAt.AddDays(0), IsDeleted = false },
-                new Appointment { AppointmentId = 2,  DoctorId = 2, PatientId = 2,  Date = date, Symptoms = "Skin rash",      Diagnostic = "Dermatitis", Medicine = "Cream", IsDone = true,  CreatedAt = baseCreatedAt.AddDays(0), IsDeleted = false },
-                new Appointment { AppointmentId = 3,  DoctorId = 3, PatientId = 3,  Date = date, Symptoms = "Knee pain",      IsDone = false, CreatedAt = baseCreatedAt.AddDays(1), IsDeleted = false },
-                new Appointment { AppointmentId = 4,  DoctorId = 5, PatientId = 4,  Date = date, Symptoms = "Sore throat",    IsDone = false, CreatedAt = baseCreatedAt.AddDays(1), IsDeleted = false },
-                new Appointment { AppointmentId = 5,  DoctorId = 1, PatientId = 5,  Date = date, Symptoms = "Chest pain",     IsDone = false, CreatedAt = baseCreatedAt.AddDays(2), IsDeleted = false },
-                new Appointment { AppointmentId = 6,  DoctorId = 8, PatientId = 6,  Date = date, Symptoms = "Blurred vision", Diagnostic = "Dry eye", Medicine = "Eye drops", IsDone = true,  CreatedAt = baseCreatedAt.AddDays(2), IsDeleted = false },
-                new Appointment { AppointmentId = 7,  DoctorId = 4, PatientId = 7,  Date = date, Symptoms = "Fever",          IsDone = false, CreatedAt = baseCreatedAt.AddDays(3), IsDeleted = false },
-                new Appointment { AppointmentId = 8,  DoctorId = 3, PatientId = 8,  Date = date, Symptoms = "Back pain",      IsDone = false, CreatedAt = baseCreatedAt.AddDays(3), IsDeleted = false },
-                new Appointment { AppointmentId = 9,  DoctorId = 7, PatientId = 9,  Date = date, Symptoms = "Dizziness",      IsDone = false, CreatedAt = baseCreatedAt.AddDays(4), IsDeleted = false },
-                new Appointment { AppointmentId = 10, DoctorId = 6, PatientId = 10, Date = date, Symptoms = "Migraine",       IsDone = false, CreatedAt = baseCreatedAt.AddDays(4), IsDeleted = false },
+                new Appointment { AppointmentId = 1,  DoctorUserId = 7, PatientUserId = 11,  Date = date, Symptoms = "Headache",       IsDone = false, CreatedAt = baseCreatedAt.AddDays(0), IsDeleted = false },
+                new Appointment { AppointmentId = 2,  DoctorUserId = 2, PatientUserId = 12,  Date = date, Symptoms = "Skin rash",      Diagnostic = "Dermatitis", Medicine = "Cream", IsDone = true,  CreatedAt = baseCreatedAt.AddDays(0), IsDeleted = false },
+                new Appointment { AppointmentId = 3,  DoctorUserId = 3, PatientUserId = 13,  Date = date, Symptoms = "Knee pain",      IsDone = false, CreatedAt = baseCreatedAt.AddDays(1), IsDeleted = false },
+                new Appointment { AppointmentId = 4,  DoctorUserId = 5, PatientUserId = 14,  Date = date, Symptoms = "Sore throat",    IsDone = false, CreatedAt = baseCreatedAt.AddDays(1), IsDeleted = false },
+                new Appointment { AppointmentId = 5,  DoctorUserId = 1, PatientUserId = 15,  Date = date, Symptoms = "Chest pain",     IsDone = false, CreatedAt = baseCreatedAt.AddDays(2), IsDeleted = false },
+                new Appointment { AppointmentId = 6,  DoctorUserId = 8, PatientUserId = 16,  Date = date, Symptoms = "Blurred vision", Diagnostic = "Dry eye", Medicine = "Eye drops", IsDone = true,  CreatedAt = baseCreatedAt.AddDays(2), IsDeleted = false },
+                new Appointment { AppointmentId = 7,  DoctorUserId = 4, PatientUserId = 17,  Date = date, Symptoms = "Fever",          IsDone = false, CreatedAt = baseCreatedAt.AddDays(3), IsDeleted = false },
+                new Appointment { AppointmentId = 8,  DoctorUserId = 3, PatientUserId = 18,  Date = date, Symptoms = "Back pain",      IsDone = false, CreatedAt = baseCreatedAt.AddDays(3), IsDeleted = false },
+                new Appointment { AppointmentId = 9,  DoctorUserId = 7, PatientUserId = 19,  Date = date, Symptoms = "Dizziness",      IsDone = false, CreatedAt = baseCreatedAt.AddDays(4), IsDeleted = false },
+                new Appointment { AppointmentId = 10, DoctorUserId = 6, PatientUserId = 20, Date = date, Symptoms = "Migraine",       IsDone = false, CreatedAt = baseCreatedAt.AddDays(4), IsDeleted = false },
             ]);
         }
     }

@@ -2,25 +2,28 @@
 
 ASP.NET Core Web API for a simple clinic system: **Patients, Doctors, Appointments**.
 
-Built while following Eng. Issam’s ASP.NET Core Web API course, then extended with my own structure (**Controllers / Services / Repos**, DTOs, pagination, FluentValidation, global exception handling, grouped DI registrations).
+Built while following Eng. Issam’s ASP.NET Core Web API course, then extended with my own structure (**Controllers / Services / Repos**, DTOs, pagination, FluentValidation, global exception handling, grouped DI registrations, Options pattern).
 
 ---
 
-## What’s implemented 
+## What’s implemented
 
 ### Core API
 - Controllers: **Patients**, **Doctors**, **Appointments**, **Tokens**
-- Domain models: **Patient**, **Doctor**, **Appointment**, **User**, **RefreshTokenModel**
-- Service layer (`I*Service` + `*Service`) for business flow + orchestration
-- Repository layer (`I*Repo` + `*Repo`) using **EF Core + DbContext**
+- Domain models: **User**, **Patient**, **Doctor**, **Appointment**, **RefreshTokenModel**
+- Service layer (`I*Service` + `*Service`) for business flow + orchestration 
+- Repository layer (`I*Repo` + `*Repo`) using **EF Core + DbContext** 
 
-### Security (JWT) 
+### Security (JWT + Refresh Tokens)
 - **JWT Bearer authentication**
-- **Access token** support (used to call secured endpoints)
-- **Refresh token model** exists (`Models/RefreshTokenModel.cs`)
+- **Access token** (short-lived) used to call secured endpoints
+- **Refresh token flow** (server-side stored) 
+  - Refresh token is generated as a **real random token**
+  - Only the **hash** is stored in DB (raw token is never stored) 
+  - Supports **1 refresh token per user** (enforced by unique `UserId`) 
+  - Refresh token entity uses `RefreshTokenId` as the **primary key** (DB-friendly), and `RefreshTokenHash` as a **unique indexed** column ✅
 - Policy-based authorization using permissions (`Permissions/Permission.cs`) + registrations
 
-> If you call a secured endpoint without a valid access token → **401 Unauthorized** ❌
 
 ### Async + Cancellation
 - All endpoints are **async**
@@ -30,7 +33,7 @@ Built while following Eng. Issam’s ASP.NET Core Web API course, then extended 
 ### Persistence (EF Core)
 - `ClinicDbContext` under `Persistence/ClinicDbContext.cs`
 - Migrations under `Persistence/Migrations/`
-- Entity configs under `Persistence/DbConfigurations/`
+- Entity configs under `Persistence/DbConfigurations/` 
 
 ### DTOs
 - `Requests/` for create/update + token requests
@@ -39,9 +42,33 @@ Built while following Eng. Issam’s ASP.NET Core Web API course, then extended 
 
 ### Validation + Error Handling
 - Validation: **FluentValidation** (`Validators/`)
-- Error handling: custom exceptions + global exception handler (`CustomExceptions/GlobalExceptionHandler.cs`)
+- Error handling: custom exceptions + global exception handler (`CustomExceptions/GlobalExceptionHandler.cs`) ✅
 - Pagination support for list endpoints
 - HTTP test file: `ClinicAPI.http`
+
+---
+
+## Project Structure
+
+This is the current solution layout (same folder grouping used in the code):
+
+### Folder purpose (quick map)
+- `Configurations/` → Options pattern classes + setup (JWT, clinic settings)
+- `Controllers/` → HTTP endpoints
+- `CustomExceptions/` → clean error model + global handler
+- `Enums/` → shared enums (UserType, RiskLevel, BloodType, etc.)
+- `Models/` → domain entities (EF Core)
+- `Permissions/` → permission constants used in policies
+- `Persistence/`
+  - `DbConfigurations/` → EF model configurations + seeding
+  - `Migrations/` → EF migrations
+  - `ClinicDbContext.cs` → DB context
+- `Query/` → paging/filter inputs
+- `Registrations/` → grouped DI registrations (auth, validators, infrastructure, business)
+- `Repositories/` → data access layer
+- `Requests/` + `Responses/` → DTOs
+- `Service/` → business logic layer
+- `Validators/` → FluentValidation validators
 
 ---
 
@@ -49,8 +76,9 @@ Built while following Eng. Issam’s ASP.NET Core Web API course, then extended 
 Configuration is strongly-typed and isolated in `Configurations/`:
 - `ClinicSettings.cs`
 - `JwtSettings.cs`
+- `JwtBearerConfigurations.cs`
 
-This keeps config clean, avoids magic strings, and makes Program.cs lighter.
+This keeps config clean, avoids magic strings, and makes Program.cs lighter
 
 ---
 
@@ -82,6 +110,8 @@ This keeps config clean, avoids magic strings, and makes Program.cs lighter.
 
 ### Tokens
 - Token endpoints exist under `TokensController` (see `Controllers/TokensController.cs` / `ClinicAPI.http`)
+- Login issues **access + refresh**
+- Refresh issues **new access + refresh**
 
 ---
 

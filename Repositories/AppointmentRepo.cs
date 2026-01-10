@@ -28,8 +28,8 @@ namespace ClinicAPI.Repositories
             var toUpdate = await context.Appointments
                 .FirstOrDefaultAsync(a => a.AppointmentId == appointmentId && !a.IsDeleted, ct);
 
-            toUpdate.DoctorId = appointment.DoctorId;
-            toUpdate.PatientId = appointment.PatientId;
+            toUpdate.DoctorUserId = appointment.DoctorUserId;
+            toUpdate.PatientUserId = appointment.PatientUserId;
             toUpdate.Date = appointment.Date;
             toUpdate.Symptoms = appointment.Symptoms;
             toUpdate.Diagnostic = appointment.Diagnostic ?? toUpdate.Diagnostic;
@@ -70,7 +70,7 @@ namespace ClinicAPI.Repositories
         {
             return await context.Appointments
                 .AsNoTracking()
-                .Where(a => !a.IsDeleted && a.DoctorId == doctorId)
+                .Where(a => !a.IsDeleted && a.DoctorUserId == doctorId)
                 .ToListAsync(ct);
         }
 
@@ -78,7 +78,7 @@ namespace ClinicAPI.Repositories
         {
             return await context.Appointments
                 .AsNoTracking()
-                .Where(a => !a.IsDeleted && a.PatientId == patientId)
+                .Where(a => !a.IsDeleted && a.PatientUserId == patientId)
                 .ToListAsync(ct);
         }
 
@@ -94,7 +94,7 @@ namespace ClinicAPI.Repositories
         {
             return await context.Appointments
                 .AnyAsync(a => !a.IsDeleted && !a.IsDone
-                    && (a.DoctorId == appointment.DoctorId || a.PatientId == appointment.PatientId)
+                    && (a.DoctorUserId == appointment.DoctorUserId || a.PatientUserId == appointment.PatientUserId)
                     && a.Date == appointment.Date, ct);
         }
     }

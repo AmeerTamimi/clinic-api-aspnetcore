@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
 
-namespace ClinicAPI.Presistence.Migrations
+namespace ClinicAPI.Migrations
 {
     [DbContext(typeof(ClinicDbContext))]
-    [Migration("20251227175027_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20260110180000_Initial_Create_But_Not_Really_Initial")]
+    partial class Initial_Create_But_Not_Really_Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,7 +36,7 @@ namespace ClinicAPI.Presistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("DoctorId")
+                    b.Property<int>("DoctorUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<bool>("IsDeleted")
@@ -53,7 +53,7 @@ namespace ClinicAPI.Presistence.Migrations
                         .HasMaxLength(500)
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("PatientId")
+                    b.Property<int>("PatientUserId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("Symptoms")
@@ -63,9 +63,9 @@ namespace ClinicAPI.Presistence.Migrations
 
                     b.HasKey("AppointmentId");
 
-                    b.HasIndex("DoctorId");
+                    b.HasIndex("DoctorUserId");
 
-                    b.HasIndex("PatientId");
+                    b.HasIndex("PatientUserId");
 
                     b.ToTable("Appointments", (string)null);
 
@@ -75,10 +75,10 @@ namespace ClinicAPI.Presistence.Migrations
                             AppointmentId = 1,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 14, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Date = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
-                            DoctorId = 7,
+                            DoctorUserId = 7,
                             IsDeleted = false,
                             IsDone = false,
-                            PatientId = 1,
+                            PatientUserId = 11,
                             Symptoms = "Headache"
                         },
                         new
@@ -87,11 +87,11 @@ namespace ClinicAPI.Presistence.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 14, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Date = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
                             Diagnostic = "Dermatitis",
-                            DoctorId = 2,
+                            DoctorUserId = 2,
                             IsDeleted = false,
                             IsDone = true,
                             Medicine = "Cream",
-                            PatientId = 2,
+                            PatientUserId = 12,
                             Symptoms = "Skin rash"
                         },
                         new
@@ -99,10 +99,10 @@ namespace ClinicAPI.Presistence.Migrations
                             AppointmentId = 3,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Date = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
-                            DoctorId = 3,
+                            DoctorUserId = 3,
                             IsDeleted = false,
                             IsDone = false,
-                            PatientId = 3,
+                            PatientUserId = 13,
                             Symptoms = "Knee pain"
                         },
                         new
@@ -110,10 +110,10 @@ namespace ClinicAPI.Presistence.Migrations
                             AppointmentId = 4,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 15, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Date = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
-                            DoctorId = 5,
+                            DoctorUserId = 5,
                             IsDeleted = false,
                             IsDone = false,
-                            PatientId = 4,
+                            PatientUserId = 14,
                             Symptoms = "Sore throat"
                         },
                         new
@@ -121,10 +121,10 @@ namespace ClinicAPI.Presistence.Migrations
                             AppointmentId = 5,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 16, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Date = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
-                            DoctorId = 1,
+                            DoctorUserId = 1,
                             IsDeleted = false,
                             IsDone = false,
-                            PatientId = 5,
+                            PatientUserId = 15,
                             Symptoms = "Chest pain"
                         },
                         new
@@ -133,11 +133,11 @@ namespace ClinicAPI.Presistence.Migrations
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 16, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Date = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
                             Diagnostic = "Dry eye",
-                            DoctorId = 8,
+                            DoctorUserId = 8,
                             IsDeleted = false,
                             IsDone = true,
                             Medicine = "Eye drops",
-                            PatientId = 6,
+                            PatientUserId = 16,
                             Symptoms = "Blurred vision"
                         },
                         new
@@ -145,10 +145,10 @@ namespace ClinicAPI.Presistence.Migrations
                             AppointmentId = 7,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 17, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Date = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
-                            DoctorId = 4,
+                            DoctorUserId = 4,
                             IsDeleted = false,
                             IsDone = false,
-                            PatientId = 7,
+                            PatientUserId = 17,
                             Symptoms = "Fever"
                         },
                         new
@@ -156,10 +156,10 @@ namespace ClinicAPI.Presistence.Migrations
                             AppointmentId = 8,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 17, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Date = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
-                            DoctorId = 3,
+                            DoctorUserId = 3,
                             IsDeleted = false,
                             IsDone = false,
-                            PatientId = 8,
+                            PatientUserId = 18,
                             Symptoms = "Back pain"
                         },
                         new
@@ -167,10 +167,10 @@ namespace ClinicAPI.Presistence.Migrations
                             AppointmentId = 9,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Date = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
-                            DoctorId = 7,
+                            DoctorUserId = 7,
                             IsDeleted = false,
                             IsDone = false,
-                            PatientId = 9,
+                            PatientUserId = 19,
                             Symptoms = "Dizziness"
                         },
                         new
@@ -178,17 +178,39 @@ namespace ClinicAPI.Presistence.Migrations
                             AppointmentId = 10,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
                             Date = new DateTimeOffset(new DateTime(2025, 12, 18, 9, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 2, 0, 0, 0)),
-                            DoctorId = 6,
+                            DoctorUserId = 6,
                             IsDeleted = false,
                             IsDone = false,
-                            PatientId = 10,
+                            PatientUserId = 20,
                             Symptoms = "Migraine"
                         });
                 });
 
-            modelBuilder.Entity("ClinicAPI.Models.Doctor", b =>
+            modelBuilder.Entity("ClinicAPI.Models.RefreshTokenModel", b =>
                 {
-                    b.Property<int>("DoctorId")
+                    b.Property<string>("RefreshTokenHash")
+                        .HasColumnType("TEXT");
+
+                    b.Property<DateTime>("Expires")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("RefreshTokenId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("RefreshTokenHash");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.ToTable("RefreshToken", (string)null);
+                });
+
+            modelBuilder.Entity("ClinicAPI.Models.User", b =>
+                {
+                    b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
@@ -196,6 +218,11 @@ namespace ClinicAPI.Presistence.Migrations
                         .HasColumnType("INTEGER");
 
                     b.Property<DateTimeOffset>("CreatedAt")
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(120)
                         .HasColumnType("TEXT");
 
                     b.Property<string>("FirstName")
@@ -213,9 +240,42 @@ namespace ClinicAPI.Presistence.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("TEXT");
+
+                    b.PrimitiveCollection<string>("Permissions")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(20)
+                        .HasColumnType("TEXT");
+
+                    b.Property<string>("RefreshTokenHash")
+                        .HasColumnType("TEXT");
+
+                    b.PrimitiveCollection<string>("Roles")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("INTEGER");
+
+                    b.HasKey("UserId");
+
+                    b.ToTable("Users", (string)null);
+
+                    b.UseTptMappingStrategy();
+                });
+
+            modelBuilder.Entity("ClinicAPI.Models.Doctor", b =>
+                {
+                    b.HasBaseType("ClinicAPI.Models.User");
+
+                    b.Property<decimal>("Salary")
                         .HasColumnType("TEXT");
 
                     b.Property<string>("Specialty")
@@ -226,164 +286,209 @@ namespace ClinicAPI.Presistence.Migrations
                     b.Property<int>("YearOfExperience")
                         .HasColumnType("INTEGER");
 
-                    b.HasKey("DoctorId");
-
                     b.ToTable("Doctors", (string)null);
 
                     b.HasData(
                         new
                         {
-                            DoctorId = 1,
-                            Age = 0,
+                            UserId = 1,
+                            Age = 40,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 10, 28, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "ahmad.khalil@clinic.test",
                             FirstName = "Ahmad",
                             IsDeleted = false,
                             LastName = "Khalil",
+                            PasswordHash = "HASH",
+                            Permissions = "[\"patient:read\",\"patient:create\",\"patient:update\",\"patient:delete\",\"patient:read-appointments\",\"patient:manage-doctor\",\"patient:manage-appointments\",\"doctor:read\",\"doctor:create\",\"doctor:update\",\"doctor:delete\",\"doctor:read-patients\",\"doctor:read-appointments\",\"doctor:delete-patient\",\"doctor:add-patient\",\"doctor:update-specialty\",\"appointment:read\",\"appointment:create\",\"appointment:update\",\"appointment:delete\",\"appointment:update-status\",\"appointment:manage-patient\",\"appointment:manage-doctor\",\"appointment:update-date\"]",
                             Phone = "+970599000001",
+                            Roles = "[\"Doctor\"]",
+                            Type = 2,
+                            Salary = 0m,
                             Specialty = "Cardiology",
-                            YearOfExperience = 0
+                            YearOfExperience = 15
                         },
                         new
                         {
-                            DoctorId = 2,
-                            Age = 0,
+                            UserId = 2,
+                            Age = 34,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "rana.haddad@clinic.test",
                             FirstName = "Rana",
                             IsDeleted = false,
                             LastName = "Haddad",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
                             Phone = "+970599000002",
+                            Roles = "[\"Doctor\"]",
+                            Type = 2,
+                            Salary = 0m,
                             Specialty = "Dermatology",
-                            YearOfExperience = 0
+                            YearOfExperience = 10
                         },
                         new
                         {
-                            DoctorId = 3,
-                            Age = 0,
+                            UserId = 3,
+                            Age = 38,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "omar.safi@clinic.test",
                             FirstName = "Omar",
                             IsDeleted = false,
                             LastName = "Safi",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
                             Phone = "+970599000003",
+                            Roles = "[\"Doctor\"]",
+                            Type = 2,
+                            Salary = 0m,
                             Specialty = "Orthopedics",
-                            YearOfExperience = 0
+                            YearOfExperience = 12
                         },
                         new
                         {
-                            DoctorId = 4,
-                            Age = 0,
+                            UserId = 4,
+                            Age = 33,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "lina.barghouti@clinic.test",
                             FirstName = "Lina",
                             IsDeleted = false,
                             LastName = "Barghouti",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
                             Phone = "+970599000004",
+                            Roles = "[\"Doctor\"]",
+                            Type = 2,
+                            Salary = 0m,
                             Specialty = "Pediatrics",
-                            YearOfExperience = 0
+                            YearOfExperience = 8
                         },
                         new
                         {
-                            DoctorId = 5,
-                            Age = 0,
+                            UserId = 5,
+                            Age = 45,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "yousef.nassar@clinic.test",
                             FirstName = "Yousef",
                             IsDeleted = false,
                             LastName = "Nassar",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
                             Phone = "+970599000005",
+                            Roles = "[\"Doctor\"]",
+                            Type = 2,
+                            Salary = 0m,
                             Specialty = "ENT",
-                            YearOfExperience = 0
+                            YearOfExperience = 20
                         },
                         new
                         {
-                            DoctorId = 6,
-                            Age = 0,
+                            UserId = 6,
+                            Age = 41,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "hala.masri@clinic.test",
                             FirstName = "Hala",
                             IsDeleted = false,
                             LastName = "Masri",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
                             Phone = "+970599000006",
+                            Roles = "[\"Doctor\"]",
+                            Type = 2,
+                            Salary = 0m,
                             Specialty = "Neurology",
-                            YearOfExperience = 0
+                            YearOfExperience = 16
                         },
                         new
                         {
-                            DoctorId = 7,
-                            Age = 0,
+                            UserId = 7,
+                            Age = 36,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 27, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "tariq.qasem@clinic.test",
                             FirstName = "Tariq",
                             IsDeleted = false,
                             LastName = "Qasem",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
                             Phone = "+970599000007",
+                            Roles = "[\"Doctor\"]",
+                            Type = 2,
+                            Salary = 0m,
                             Specialty = "Cardiology",
-                            YearOfExperience = 0
+                            YearOfExperience = 11
                         },
                         new
                         {
-                            DoctorId = 8,
-                            Age = 0,
+                            UserId = 8,
+                            Age = 29,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 2, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "maya.ayyad@clinic.test",
                             FirstName = "Maya",
                             IsDeleted = false,
                             LastName = "Ayyad",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
                             Phone = "+970599000008",
+                            Roles = "[\"Doctor\"]",
+                            Type = 2,
+                            Salary = 0m,
                             Specialty = "GeneralPractice",
-                            YearOfExperience = 0
+                            YearOfExperience = 5
                         },
                         new
                         {
-                            DoctorId = 9,
-                            Age = 0,
+                            UserId = 9,
+                            Age = 39,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 7, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "nabil.salameh@clinic.test",
                             FirstName = "Nabil",
                             IsDeleted = false,
                             LastName = "Salameh",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
                             Phone = "+970599000009",
+                            Roles = "[\"Doctor\"]",
+                            Type = 2,
+                            Salary = 0m,
                             Specialty = "Neurology",
-                            YearOfExperience = 0
+                            YearOfExperience = 13
                         },
                         new
                         {
-                            DoctorId = 10,
-                            Age = 0,
+                            UserId = 10,
+                            Age = 32,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 12, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "sara.zaid@clinic.test",
                             FirstName = "Sara",
                             IsDeleted = false,
                             LastName = "Zaid",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
                             Phone = "+970599000010",
+                            Roles = "[\"Doctor\"]",
+                            Type = 2,
+                            Salary = 0m,
                             Specialty = "Orthopedics",
-                            YearOfExperience = 0
+                            YearOfExperience = 7
                         });
                 });
 
             modelBuilder.Entity("ClinicAPI.Models.Patient", b =>
                 {
-                    b.Property<int>("PatientId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER");
+                    b.HasBaseType("ClinicAPI.Models.User");
 
-                    b.Property<int>("Age")
-                        .HasColumnType("INTEGER");
-
-                    b.Property<DateTimeOffset>("CreatedAt")
+                    b.Property<string>("Allergies")
                         .HasColumnType("TEXT");
+
+                    b.Property<int?>("BloodType")
+                        .HasColumnType("INTEGER");
 
                     b.Property<int>("DoctorId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("FirstName")
-                        .IsRequired()
-                        .HasMaxLength(50)
+                    b.Property<string>("Note")
                         .HasColumnType("TEXT");
 
-                    b.Property<bool>("IsDeleted")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("INTEGER")
-                        .HasDefaultValue(false);
-
-                    b.Property<string>("LastName")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("TEXT");
-
-                    b.HasKey("PatientId");
+                    b.Property<int?>("RiskLevel")
+                        .HasColumnType("INTEGER");
 
                     b.HasIndex("DoctorId");
 
@@ -392,103 +497,163 @@ namespace ClinicAPI.Presistence.Migrations
                     b.HasData(
                         new
                         {
-                            PatientId = 1,
+                            UserId = 11,
                             Age = 20,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DoctorId = 7,
+                            Email = "ameer.tamimi@clinic.test",
                             FirstName = "Ameer",
                             IsDeleted = false,
-                            LastName = "Tamimi"
+                            LastName = "Tamimi",
+                            PasswordHash = "HASH",
+                            Permissions = "[\"patient:read\",\"patient:create\",\"patient:update\",\"patient:delete\",\"patient:read-appointments\",\"patient:manage-doctor\",\"patient:manage-appointments\",\"doctor:read\",\"doctor:create\",\"doctor:update\",\"doctor:delete\",\"doctor:read-patients\",\"doctor:read-appointments\",\"doctor:delete-patient\",\"doctor:add-patient\",\"doctor:update-specialty\",\"appointment:read\",\"appointment:create\",\"appointment:update\",\"appointment:delete\",\"appointment:update-status\",\"appointment:manage-patient\",\"appointment:manage-doctor\",\"appointment:update-date\"]",
+                            Phone = "+970599001001",
+                            Roles = "[\"Patient\"]",
+                            Type = 1,
+                            DoctorId = 7
                         },
                         new
                         {
-                            PatientId = 2,
+                            UserId = 12,
                             Age = 21,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DoctorId = 2,
+                            Email = "hareth.shoman@clinic.test",
                             FirstName = "Hareth",
                             IsDeleted = false,
-                            LastName = "Shoman"
+                            LastName = "Shoman",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
+                            Phone = "+970599001002",
+                            Roles = "[\"Patient\"]",
+                            Type = 1,
+                            DoctorId = 2
                         },
                         new
                         {
-                            PatientId = 3,
+                            UserId = 13,
                             Age = 22,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DoctorId = 3,
+                            Email = "elyas.najeh@clinic.test",
                             FirstName = "Elyas",
                             IsDeleted = false,
-                            LastName = "Najeh"
+                            LastName = "Najeh",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
+                            Phone = "+970599001003",
+                            Roles = "[\"Patient\"]",
+                            Type = 1,
+                            DoctorId = 3
                         },
                         new
                         {
-                            PatientId = 4,
+                            UserId = 14,
                             Age = 30,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DoctorId = 5,
+                            Email = "mariam.yasin@clinic.test",
                             FirstName = "Mariam",
                             IsDeleted = false,
-                            LastName = "Yasin"
+                            LastName = "Yasin",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
+                            Phone = "+970599001004",
+                            Roles = "[\"Patient\"]",
+                            Type = 1,
+                            DoctorId = 5
                         },
                         new
                         {
-                            PatientId = 5,
+                            UserId = 15,
                             Age = 28,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DoctorId = 1,
+                            Email = "kareem.abulail@clinic.test",
                             FirstName = "Kareem",
                             IsDeleted = false,
-                            LastName = "AbuLail"
+                            LastName = "AbuLail",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
+                            Phone = "+970599001005",
+                            Roles = "[\"Patient\"]",
+                            Type = 1,
+                            DoctorId = 1
                         },
                         new
                         {
-                            PatientId = 6,
+                            UserId = 16,
                             Age = 19,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DoctorId = 8,
+                            Email = "noor.said@clinic.test",
                             FirstName = "Noor",
                             IsDeleted = false,
-                            LastName = "Said"
+                            LastName = "Said",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
+                            Phone = "+970599001006",
+                            Roles = "[\"Patient\"]",
+                            Type = 1,
+                            DoctorId = 8
                         },
                         new
                         {
-                            PatientId = 7,
+                            UserId = 17,
                             Age = 23,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DoctorId = 4,
+                            Email = "zaid.qamhieh@clinic.test",
                             FirstName = "Zaid",
                             IsDeleted = false,
-                            LastName = "Qamhieh"
+                            LastName = "Qamhieh",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
+                            Phone = "+970599001007",
+                            Roles = "[\"Patient\"]",
+                            Type = 1,
+                            DoctorId = 4
                         },
                         new
                         {
-                            PatientId = 8,
+                            UserId = 18,
                             Age = 24,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DoctorId = 3,
+                            Email = "habeeb.ahmad@clinic.test",
                             FirstName = "Habeeb",
                             IsDeleted = false,
-                            LastName = "Ahmad"
+                            LastName = "Ahmad",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
+                            Phone = "+970599001008",
+                            Roles = "[\"Patient\"]",
+                            Type = 1,
+                            DoctorId = 3
                         },
                         new
                         {
-                            PatientId = 9,
+                            UserId = 19,
                             Age = 26,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DoctorId = 7,
+                            Email = "waleed.noubani@clinic.test",
                             FirstName = "Waleed",
                             IsDeleted = false,
-                            LastName = "Noubani"
+                            LastName = "Noubani",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
+                            Phone = "+970599001009",
+                            Roles = "[\"Patient\"]",
+                            Type = 1,
+                            DoctorId = 7
                         },
                         new
                         {
-                            PatientId = 10,
+                            UserId = 20,
                             Age = 29,
                             CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            DoctorId = 6,
+                            Email = "ruba.katout@clinic.test",
                             FirstName = "Ruba",
                             IsDeleted = false,
-                            LastName = "Katout"
+                            LastName = "Katout",
+                            PasswordHash = "HASH",
+                            Permissions = "[]",
+                            Phone = "+970599001010",
+                            Roles = "[\"Patient\"]",
+                            Type = 1,
+                            DoctorId = 6
                         });
                 });
 
@@ -496,19 +661,39 @@ namespace ClinicAPI.Presistence.Migrations
                 {
                     b.HasOne("ClinicAPI.Models.Doctor", "Doctor")
                         .WithMany("DoctorAppointments")
-                        .HasForeignKey("DoctorId")
+                        .HasForeignKey("DoctorUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("ClinicAPI.Models.Patient", "Patient")
                         .WithMany("PatientAppointments")
-                        .HasForeignKey("PatientId")
+                        .HasForeignKey("PatientUserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Doctor");
 
                     b.Navigation("Patient");
+                });
+
+            modelBuilder.Entity("ClinicAPI.Models.RefreshTokenModel", b =>
+                {
+                    b.HasOne("ClinicAPI.Models.User", "User")
+                        .WithOne("RefreshToken")
+                        .HasForeignKey("ClinicAPI.Models.RefreshTokenModel", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ClinicAPI.Models.Doctor", b =>
+                {
+                    b.HasOne("ClinicAPI.Models.User", null)
+                        .WithOne()
+                        .HasForeignKey("ClinicAPI.Models.Doctor", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("ClinicAPI.Models.Patient", b =>
@@ -519,7 +704,18 @@ namespace ClinicAPI.Presistence.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("ClinicAPI.Models.User", null)
+                        .WithOne()
+                        .HasForeignKey("ClinicAPI.Models.Patient", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Doctor");
+                });
+
+            modelBuilder.Entity("ClinicAPI.Models.User", b =>
+                {
+                    b.Navigation("RefreshToken");
                 });
 
             modelBuilder.Entity("ClinicAPI.Models.Doctor", b =>

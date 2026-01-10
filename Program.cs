@@ -19,7 +19,6 @@ builder.Services.AddOptions<ClinicSettings>()
 builder.Services.AddOptions<JwtSettings>()
     .Bind(builder.Configuration.GetSection(JwtSettings.JwtSettingsName));
 
-
 builder.Services.AddControllers()
                 .AddJsonOptions(o =>
                             o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));

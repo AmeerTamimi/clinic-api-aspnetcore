@@ -12,7 +12,7 @@ namespace ClinicAPI.Repositories
                 .AsNoTracking()
                 .Include(d => d.DoctorAppointments)
                 .Include(d => d.DoctorPatients)
-                .SingleOrDefaultAsync(d => d.DoctorId == doctorId && !d.IsDeleted, ct);
+                .SingleOrDefaultAsync(d => d.UserId == doctorId && !d.IsDeleted, ct);
         }
 
         public async Task<Doctor> AddNewDoctorAsync(Doctor newDoctor, CancellationToken ct = default)
@@ -29,7 +29,7 @@ namespace ClinicAPI.Repositories
         public async Task UpdateDoctorAsync(Doctor doctor, int doctorId, CancellationToken ct = default)
         {
             var toUpdate = await context.Doctors
-                .FirstOrDefaultAsync(d => d.DoctorId == doctorId && !d.IsDeleted, ct);
+                .FirstOrDefaultAsync(d => d.UserId == doctorId && !d.IsDeleted, ct);
 
             toUpdate.FirstName = doctor.FirstName;
             toUpdate.LastName = doctor.LastName;
@@ -44,7 +44,7 @@ namespace ClinicAPI.Repositories
         public async Task<bool> DeleteDoctorByIdAsync(int doctorId, CancellationToken ct = default)
         {
             var toDelete = await context.Doctors
-                .FirstOrDefaultAsync(d => d.DoctorId == doctorId && !d.IsDeleted, ct);
+                .FirstOrDefaultAsync(d => d.UserId == doctorId && !d.IsDeleted, ct);
 
             if (toDelete is null) return false;
 
@@ -75,7 +75,7 @@ namespace ClinicAPI.Repositories
         {
             return await context.Appointments
                 .AsNoTracking()
-                .Where(a => !a.IsDeleted && a.DoctorId == doctorId)
+                .Where(a => !a.IsDeleted && a.DoctorUserId == doctorId)
                 .OrderBy(a => a.Date)
                 .ToListAsync(ct);
         }

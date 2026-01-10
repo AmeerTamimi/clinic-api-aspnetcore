@@ -1,13 +1,14 @@
 ﻿using ClinicAPI.Enums;
+using ClinicAPI.Models;
 
 namespace ClinicAPI.Requests
 {
-    public class JwtTokenRequest
+    public class UserRequest
     {
-        public int UserId { get; set; }
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? Email { get; set; }
+        public int Age { get; set; }
         public string? Phone { get; set; }
         public string? Password { get; set; }
     }

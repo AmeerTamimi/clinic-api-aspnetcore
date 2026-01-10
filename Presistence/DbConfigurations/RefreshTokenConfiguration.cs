@@ -10,10 +10,10 @@ namespace ClinicAPI.Presistence.DbConfigurations
         {
             builder.ToTable("RefreshToken");
 
-            builder.HasKey(r => r.RefreshTokenHash);
+            builder.HasKey(r => r.RefreshTokenId);
 
-            builder.HasOne(r => r.Patient)
-                   .WithOne(p => p.RefreshToken)
+            builder.HasOne(r => r.User)
+                   .WithOne(u => u.RefreshTokenModel)
                    .HasForeignKey<RefreshTokenModel>(r => r.UserId);
         }
     }

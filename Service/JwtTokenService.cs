@@ -1,6 +1,6 @@
 ﻿using ClinicAPI.Configurations;
 using ClinicAPI.CustomExceptions;
-using ClinicAPI.Enums;
+using System.Security.Cryptography;
 using ClinicAPI.Models;
 using ClinicAPI.Repositories;
 using ClinicAPI.Requests;
@@ -16,23 +16,20 @@ using System.Text;
 // wanna make refresh token repo , that ahs the method that will get the refresh token !!!!!!
 // and saves also !!!
 
-
-
-
 namespace ClinicAPI.Service
 {
     public class JwtTokenService : IJwtTokenService
     {
         private readonly IOptions<JwtSettings> _jwtSettings;
-        private readonly IPatientRepo _patientRepo;
+        private readonly UserRepo _userRepo;
         private readonly IRefreshTokenRepo _refreshTokenRepo;
-        public JwtTokenService(IOptions<JwtSettings> jwtSettings , IPatientRepo patientRepo, IRefreshTokenRepo refreshTokenRepo)
+        public JwtTokenService(IOptions<JwtSettings> jwtSettings , UserRepo userRepo, IRefreshTokenRepo refreshTokenRepo)
         {
             _jwtSettings = jwtSettings;
-            _patientRepo = patientRepo;
+            _userRepo = userRepo;
             _refreshTokenRepo = refreshTokenRepo;
         }
-        public async Task<JwtTokenResponse> GenerateAccessToken(JwtTokenRequest request , string type)
+        public async Task<JwtTokenResponse> GenerateAccessToken(JwtTokenRequest request)
         {
             var claims = new List<Claim>()
             {
@@ -42,18 +39,20 @@ namespace ClinicAPI.Service
                 new (JwtRegisteredClaimNames.Email , request.Email),
             };
 
-            var patient = await _patientRepo.GetPatientByIdAsync(request.UserId);
+            var user = await _userRepo.GetUserByIdAsync(request.UserId);
 
-            if (patient is null) throw new NotFoundException("Patient Not Found");
+            if (user is null) throw new NotFoundException("User Not Found");
 
-            // Lets say we have a hash algo
-            if (patient.PasswordHash != request.Password)
-                throw new ValidationException("Wrong Password !");
+            var requestPasswordHash1 = HashRefreshToken(request.Password!);
+            var requestPasswordHash2 = HashRefreshToken(user.PasswordHash); // LMAO
 
-            foreach(var role in patient.Roles)
+            if (requestPasswordHash2 != requestPasswordHash1)
+                throw new ValidationException("Wrong Password , Try Again");
+
+            foreach(var role in user.Roles)
                 claims.Add(new(ClaimTypes.Role, role));
 
-            foreach (var permission in patient.Permissions)
+            foreach (var permission in user.Permissions)
                 claims.Add(new("permission", permission));
 
             var settings = _jwtSettings.Value;
@@ -78,29 +77,37 @@ namespace ClinicAPI.Service
 
             var securityToken = tokenHandler.CreateToken(descriptor);
 
+            var randomRefreshToken = GenerateRandomRefreshToken();
+
+            var hashedRefreshToken = HashRefreshToken(randomRefreshToken);
+
+            user.RefreshToken = randomRefreshToken;
+
             var refreshToken = new RefreshTokenModel()
             {
-                RefreshTokenHash = "RefreshToken",
+                RefreshTokenHash = hashedRefreshToken,
                 UserId = request.UserId,
-                Expires = DateTime.UtcNow.AddMinutes(2)
-            };
-            await _refreshTokenRepo.DeleteRefreshTokenAsync(request.UserId);
+                Expires = DateTime.UtcNow.AddHours(12)
+            };            
+
+            await _refreshTokenRepo.DeleteRefreshTokenAsync(user.UserId);            
             await _refreshTokenRepo.AddRefreshTokenAsync(refreshToken);
 
             return new JwtTokenResponse
             {
                 AccessToken = tokenHandler.WriteToken(securityToken),
-                RefreshToken = "RefreshToken",
+                RefreshToken = randomRefreshToken,
                 Expires = expires
             };
         }
 
-        public async Task<JwtTokenResponse> GenerateAccessTokenFromRefreshToken(RefreshTokenRequest request, int userId)
+        public async Task<JwtTokenResponse> GenerateAccessTokenFromRefreshToken(RefreshTokenRequest request)
         {
             // if valid refresh Token
-            var refreshToken = await _refreshTokenRepo.GetRefreshTokenAsync(request.RefreshToken!);
+            var refreshTokenHash = HashRefreshToken(request.RefreshToken);
+            var refreshToken = await _refreshTokenRepo.GetRefreshTokenAsync(refreshTokenHash);
 
-            if (refreshToken is null || refreshToken.UserId != userId || refreshToken.RefreshTokenHash != request.RefreshToken)
+            if (refreshToken is null)
                 throw new ValidationException("Refresh is not Valid");
 
             if (refreshToken.Expires < DateTime.UtcNow)
@@ -108,11 +115,11 @@ namespace ClinicAPI.Service
 
             // we issue a new token response  (access + refresh)
 
-            var user = await _patientRepo.GetPatientByIdAsync(userId);
+            var user = await _userRepo.GetUserByIdAsync(refreshToken.UserId);
 
             var jwtRequest = new JwtTokenRequest()
             {
-                UserId = user.PatientId,
+                UserId = user.UserId,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
@@ -121,9 +128,24 @@ namespace ClinicAPI.Service
 
             };
 
-            var token = GenerateAccessToken(jwtRequest , "patient");
+            var token = GenerateAccessToken(jwtRequest);
 
             return await token;
         }
-    }
+
+        public string GenerateRandomRefreshToken()
+        {
+            var random = RandomNumberGenerator.GetBytes(32);
+
+            return Convert.ToBase64String(random);
+        }
+
+        public string HashRefreshToken(string randomRefreshToken)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(randomRefreshToken);
+            byte[] hashBytes = SHA256.HashData(bytes);
+
+            return Convert.ToHexString(hashBytes);
+        }
+    } 
 }

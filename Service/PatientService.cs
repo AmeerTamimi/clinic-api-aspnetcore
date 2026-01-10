@@ -98,7 +98,7 @@ namespace ClinicAPI.Service
 
             var patientsResponse = PatientResponse.FromModels(patients, query);
 
-            return PagedResult<PatientResponse>.GetPagedItems(patientsResponse, totalItems, page, pageSize);
+            return PagedResult<PatientResponse>.GetPagedItems(patientsResponse!, totalItems, page, pageSize);
         }
 
         private void IsValidPatient(CreatePatientRequest patientRequest)
@@ -107,7 +107,7 @@ namespace ClinicAPI.Service
             if (patientRequest is null)
                 throw new ValidationException("Invalid Patient Data");
 
-            if (!patientRequest.FirstName.All(char.IsLetter) || !patientRequest.LastName.All(char.IsLetter))
+            if (!patientRequest.FirstName!.All(char.IsLetter) || !patientRequest.LastName!.All(char.IsLetter))
                 throw new ValidationException("Name Must Contain Only Letters");
 
             if (patientRequest.Age < 0 || patientRequest.Age > 130)
@@ -122,7 +122,7 @@ namespace ClinicAPI.Service
             if (patientRequest is null)
                 throw new ValidationException("Invalid Patient Data");
 
-            if (!patientRequest.FirstName.All(char.IsLetter) || !patientRequest.LastName.All(char.IsLetter))
+            if (!patientRequest.FirstName!.All(char.IsLetter) || !patientRequest.LastName!.All(char.IsLetter))
                 throw new ValidationException("Name Must Contain Only Letters");
 
             if (patientRequest.Age < 0 || patientRequest.Age > 120)
@@ -133,8 +133,8 @@ namespace ClinicAPI.Service
         {
             var patient = new Patient
             {
-                FirstName = patientRequest.FirstName,
-                LastName = patientRequest.LastName,
+                FirstName = patientRequest.FirstName!,
+                LastName = patientRequest.LastName!,
                 Age = patientRequest.Age,
                 DoctorId = patientRequest.DoctorId
             };
@@ -145,9 +145,9 @@ namespace ClinicAPI.Service
         {
             var patient = new Patient
             {
-                PatientId = patientId,
-                FirstName = patientRequest.FirstName,
-                LastName = patientRequest.LastName,
+                UserId = patientId,
+                FirstName = patientRequest.FirstName!,
+                LastName = patientRequest.LastName!,
                 Age = (int) patientRequest.Age,
                 DoctorId = (int) patientRequest.DoctorId
             };

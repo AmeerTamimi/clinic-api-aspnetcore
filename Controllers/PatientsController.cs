@@ -40,7 +40,7 @@ namespace ClinicAPI.Controllers
         public async Task<IActionResult> AddPatient([FromBody] CreatePatientRequest createRequest, CancellationToken ct = default)
         {
             var patient = await _patientService.AddNewPatientAsync(createRequest, ct);
-            return Created($"Patient With Id {patient.PatientId} was Created", patient);
+            return Created($"Patient With Id {patient.UserId} was Created", patient);
         }
 
         [HttpPut("{patientId:int}")]

@@ -3,6 +3,7 @@ using System;
 using ClinicAPI.Presistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ClinicAPI.Migrations
 {
     [DbContext(typeof(ClinicDbContext))]
-    partial class ClinicDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260110180324_update_RefreshToken")]
+    partial class update_RefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder.HasAnnotation("ProductVersion", "9.0.11");
@@ -253,7 +256,7 @@ namespace ClinicAPI.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("TEXT");
 
-                    b.Property<string>("RefreshToken")
+                    b.Property<string>("RefreshTokenHash")
                         .HasColumnType("TEXT");
 
                     b.PrimitiveCollection<string>("Roles")
@@ -297,12 +300,12 @@ namespace ClinicAPI.Migrations
                             FirstName = "Ahmad",
                             IsDeleted = false,
                             LastName = "Khalil",
-                            PasswordHash = "DoctorId10",
+                            PasswordHash = "HASH",
                             Permissions = "[\"patient:read\",\"patient:create\",\"patient:update\",\"patient:delete\",\"patient:read-appointments\",\"patient:manage-doctor\",\"patient:manage-appointments\",\"doctor:read\",\"doctor:create\",\"doctor:update\",\"doctor:delete\",\"doctor:read-patients\",\"doctor:read-appointments\",\"doctor:delete-patient\",\"doctor:add-patient\",\"doctor:update-specialty\",\"appointment:read\",\"appointment:create\",\"appointment:update\",\"appointment:delete\",\"appointment:update-status\",\"appointment:manage-patient\",\"appointment:manage-doctor\",\"appointment:update-date\"]",
                             Phone = "+970599000001",
                             Roles = "[\"Doctor\"]",
                             Type = 2,
-                            Salary = 12000m,
+                            Salary = 0m,
                             Specialty = "Cardiology",
                             YearOfExperience = 15
                         },
@@ -315,12 +318,12 @@ namespace ClinicAPI.Migrations
                             FirstName = "Rana",
                             IsDeleted = false,
                             LastName = "Haddad",
-                            PasswordHash = "DoctorId2",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
                             Phone = "+970599000002",
                             Roles = "[\"Doctor\"]",
                             Type = 2,
-                            Salary = 9500m,
+                            Salary = 0m,
                             Specialty = "Dermatology",
                             YearOfExperience = 10
                         },
@@ -333,12 +336,12 @@ namespace ClinicAPI.Migrations
                             FirstName = "Omar",
                             IsDeleted = false,
                             LastName = "Safi",
-                            PasswordHash = "DoctorId3",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
                             Phone = "+970599000003",
                             Roles = "[\"Doctor\"]",
                             Type = 2,
-                            Salary = 11000m,
+                            Salary = 0m,
                             Specialty = "Orthopedics",
                             YearOfExperience = 12
                         },
@@ -351,12 +354,12 @@ namespace ClinicAPI.Migrations
                             FirstName = "Lina",
                             IsDeleted = false,
                             LastName = "Barghouti",
-                            PasswordHash = "DoctorId4",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
                             Phone = "+970599000004",
                             Roles = "[\"Doctor\"]",
                             Type = 2,
-                            Salary = 9000m,
+                            Salary = 0m,
                             Specialty = "Pediatrics",
                             YearOfExperience = 8
                         },
@@ -369,12 +372,12 @@ namespace ClinicAPI.Migrations
                             FirstName = "Yousef",
                             IsDeleted = false,
                             LastName = "Nassar",
-                            PasswordHash = "DoctorId5",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
                             Phone = "+970599000005",
                             Roles = "[\"Doctor\"]",
                             Type = 2,
-                            Salary = 13000m,
+                            Salary = 0m,
                             Specialty = "ENT",
                             YearOfExperience = 20
                         },
@@ -387,12 +390,12 @@ namespace ClinicAPI.Migrations
                             FirstName = "Hala",
                             IsDeleted = false,
                             LastName = "Masri",
-                            PasswordHash = "DoctorId6",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
                             Phone = "+970599000006",
                             Roles = "[\"Doctor\"]",
                             Type = 2,
-                            Salary = 12500m,
+                            Salary = 0m,
                             Specialty = "Neurology",
                             YearOfExperience = 16
                         },
@@ -405,12 +408,12 @@ namespace ClinicAPI.Migrations
                             FirstName = "Tariq",
                             IsDeleted = false,
                             LastName = "Qasem",
-                            PasswordHash = "DoctorId7",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
                             Phone = "+970599000007",
                             Roles = "[\"Doctor\"]",
                             Type = 2,
-                            Salary = 10500m,
+                            Salary = 0m,
                             Specialty = "Cardiology",
                             YearOfExperience = 11
                         },
@@ -423,12 +426,12 @@ namespace ClinicAPI.Migrations
                             FirstName = "Maya",
                             IsDeleted = false,
                             LastName = "Ayyad",
-                            PasswordHash = "DoctorId8",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
                             Phone = "+970599000008",
                             Roles = "[\"Doctor\"]",
                             Type = 2,
-                            Salary = 8000m,
+                            Salary = 0m,
                             Specialty = "GeneralPractice",
                             YearOfExperience = 5
                         },
@@ -441,12 +444,12 @@ namespace ClinicAPI.Migrations
                             FirstName = "Nabil",
                             IsDeleted = false,
                             LastName = "Salameh",
-                            PasswordHash = "DoctorId9",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
                             Phone = "+970599000009",
                             Roles = "[\"Doctor\"]",
                             Type = 2,
-                            Salary = 11500m,
+                            Salary = 0m,
                             Specialty = "Neurology",
                             YearOfExperience = 13
                         },
@@ -459,12 +462,12 @@ namespace ClinicAPI.Migrations
                             FirstName = "Sara",
                             IsDeleted = false,
                             LastName = "Zaid",
-                            PasswordHash = "DoctorId10",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
                             Phone = "+970599000010",
                             Roles = "[\"Doctor\"]",
                             Type = 2,
-                            Salary = 8800m,
+                            Salary = 0m,
                             Specialty = "Orthopedics",
                             YearOfExperience = 7
                         });
@@ -497,199 +500,162 @@ namespace ClinicAPI.Migrations
                         new
                         {
                             UserId = 11,
-                            Age = 26,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 1, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "khaled.abusaleh@clinic.test",
-                            FirstName = "Khaled",
+                            Age = 20,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "ameer.tamimi@clinic.test",
+                            FirstName = "Ameer",
                             IsDeleted = false,
-                            LastName = "AbuSaleh",
-                            PasswordHash = "PatientId11",
-                            Permissions = "[\"patient:read\",\"patient:update\",\"patient:read-appointments\"]",
-                            Phone = "+970599000011",
+                            LastName = "Tamimi",
+                            PasswordHash = "HASH",
+                            Permissions = "[\"patient:read\",\"patient:create\",\"patient:update\",\"patient:delete\",\"patient:read-appointments\",\"patient:manage-doctor\",\"patient:manage-appointments\",\"doctor:read\",\"doctor:create\",\"doctor:update\",\"doctor:delete\",\"doctor:read-patients\",\"doctor:read-appointments\",\"doctor:delete-patient\",\"doctor:add-patient\",\"doctor:update-specialty\",\"appointment:read\",\"appointment:create\",\"appointment:update\",\"appointment:delete\",\"appointment:update-status\",\"appointment:manage-patient\",\"appointment:manage-doctor\",\"appointment:update-date\"]",
+                            Phone = "+970599001001",
                             Roles = "[\"Patient\"]",
                             Type = 1,
-                            Allergies = "Penicillin",
-                            BloodType = 1,
-                            DoctorId = 1,
-                            Note = "Asthma history",
-                            RiskLevel = 1
+                            DoctorId = 7
                         },
                         new
                         {
                             UserId = 12,
-                            Age = 31,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 3, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "rami.hassan@clinic.test",
-                            FirstName = "Rami",
+                            Age = 21,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 14, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "hareth.shoman@clinic.test",
+                            FirstName = "Hareth",
                             IsDeleted = false,
-                            LastName = "Hassan",
-                            PasswordHash = "PatientId12",
+                            LastName = "Shoman",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
-                            Phone = "+970599000012",
+                            Phone = "+970599001002",
                             Roles = "[\"Patient\"]",
                             Type = 1,
-                            Allergies = "Peanuts",
-                            BloodType = 2,
-                            DoctorId = 1,
-                            Note = "High BP monitoring",
-                            RiskLevel = 2
+                            DoctorId = 2
                         },
                         new
                         {
                             UserId = 13,
                             Age = 22,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 5, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "huda.yasin@clinic.test",
-                            FirstName = "Huda",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 15, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "elyas.najeh@clinic.test",
+                            FirstName = "Elyas",
                             IsDeleted = false,
-                            LastName = "Yasin",
-                            PasswordHash = "PatientId13",
+                            LastName = "Najeh",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
-                            Phone = "+970599000013",
+                            Phone = "+970599001003",
                             Roles = "[\"Patient\"]",
                             Type = 1,
-                            BloodType = 1,
-                            DoctorId = 2,
-                            Note = "Routine follow-up",
-                            RiskLevel = 0
+                            DoctorId = 3
                         },
                         new
                         {
                             UserId = 14,
-                            Age = 44,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 8, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "sami.naji@clinic.test",
-                            FirstName = "Sami",
+                            Age = 30,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "mariam.yasin@clinic.test",
+                            FirstName = "Mariam",
                             IsDeleted = false,
-                            LastName = "Naji",
-                            PasswordHash = "PatientId14",
+                            LastName = "Yasin",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
-                            Phone = "+970599000014",
+                            Phone = "+970599001004",
                             Roles = "[\"Patient\"]",
                             Type = 1,
-                            Allergies = "Dust",
-                            BloodType = 3,
-                            DoctorId = 3,
-                            Note = "Joint pain",
-                            RiskLevel = 2
+                            DoctorId = 5
                         },
                         new
                         {
                             UserId = 15,
                             Age = 28,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 10, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "mona.sawalha@clinic.test",
-                            FirstName = "Mona",
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 17, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "kareem.abulail@clinic.test",
+                            FirstName = "Kareem",
                             IsDeleted = false,
-                            LastName = "Sawalha",
-                            PasswordHash = "PatientId15",
+                            LastName = "AbuLail",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
-                            Phone = "+970599000015",
+                            Phone = "+970599001005",
                             Roles = "[\"Patient\"]",
                             Type = 1,
-                            Allergies = "Latex",
-                            BloodType = 2,
-                            DoctorId = 4,
-                            Note = "Pediatric consult",
-                            RiskLevel = 1
+                            DoctorId = 1
                         },
                         new
                         {
                             UserId = 16,
-                            Age = 35,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 13, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "tamer.karmi@clinic.test",
-                            FirstName = "Tamer",
+                            Age = 19,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 18, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "noor.said@clinic.test",
+                            FirstName = "Noor",
                             IsDeleted = false,
-                            LastName = "Karmi",
-                            PasswordHash = "PatientId16",
+                            LastName = "Said",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
-                            Phone = "+970599000016",
+                            Phone = "+970599001006",
                             Roles = "[\"Patient\"]",
                             Type = 1,
-                            BloodType = 0,
-                            DoctorId = 5,
-                            Note = "ENT check",
-                            RiskLevel = 1
+                            DoctorId = 8
                         },
                         new
                         {
                             UserId = 17,
-                            Age = 19,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 16, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "aya.mansour@clinic.test",
-                            FirstName = "Aya",
+                            Age = 23,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "zaid.qamhieh@clinic.test",
+                            FirstName = "Zaid",
                             IsDeleted = false,
-                            LastName = "Mansour",
-                            PasswordHash = "PatientId17",
+                            LastName = "Qamhieh",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
-                            Phone = "+970599000017",
+                            Phone = "+970599001007",
                             Roles = "[\"Patient\"]",
                             Type = 1,
-                            Allergies = "Seafood",
-                            BloodType = 1,
-                            DoctorId = 6,
-                            Note = "Neurology follow-up",
-                            RiskLevel = 2
+                            DoctorId = 4
                         },
                         new
                         {
                             UserId = 18,
-                            Age = 52,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 19, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "bilal.hamdan@clinic.test",
-                            FirstName = "Bilal",
+                            Age = 24,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 20, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "habeeb.ahmad@clinic.test",
+                            FirstName = "Habeeb",
                             IsDeleted = false,
-                            LastName = "Hamdan",
-                            PasswordHash = "PatientId18",
+                            LastName = "Ahmad",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
-                            Phone = "+970599000018",
+                            Phone = "+970599001008",
                             Roles = "[\"Patient\"]",
                             Type = 1,
-                            Allergies = "Aspirin",
-                            BloodType = 3,
-                            DoctorId = 7,
-                            Note = "Cardio check",
-                            RiskLevel = 2
+                            DoctorId = 3
                         },
                         new
                         {
                             UserId = 19,
-                            Age = 24,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "noor.zahran@clinic.test",
-                            FirstName = "Noor",
+                            Age = 26,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 21, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "waleed.noubani@clinic.test",
+                            FirstName = "Waleed",
                             IsDeleted = false,
-                            LastName = "Zahran",
-                            PasswordHash = "PatientId19",
+                            LastName = "Noubani",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
-                            Phone = "+970599000019",
+                            Phone = "+970599001009",
                             Roles = "[\"Patient\"]",
                             Type = 1,
-                            BloodType = 2,
-                            DoctorId = 8,
-                            Note = "General visit",
-                            RiskLevel = 0
+                            DoctorId = 7
                         },
                         new
                         {
                             UserId = 20,
-                            Age = 30,
-                            CreatedAt = new DateTimeOffset(new DateTime(2025, 11, 25, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
-                            Email = "yara.jabari@clinic.test",
-                            FirstName = "Yara",
+                            Age = 29,
+                            CreatedAt = new DateTimeOffset(new DateTime(2025, 12, 22, 0, 0, 0, 0, DateTimeKind.Unspecified), new TimeSpan(0, 0, 0, 0, 0)),
+                            Email = "ruba.katout@clinic.test",
+                            FirstName = "Ruba",
                             IsDeleted = false,
-                            LastName = "Jabari",
-                            PasswordHash = "PatientId20",
+                            LastName = "Katout",
+                            PasswordHash = "HASH",
                             Permissions = "[]",
-                            Phone = "+970599000020",
+                            Phone = "+970599001010",
                             Roles = "[\"Patient\"]",
                             Type = 1,
-                            Allergies = "Pollen",
-                            BloodType = 1,
-                            DoctorId = 9,
-                            Note = "Ortho follow-up",
-                            RiskLevel = 1
+                            DoctorId = 6
                         });
                 });
 
@@ -715,7 +681,7 @@ namespace ClinicAPI.Migrations
             modelBuilder.Entity("ClinicAPI.Models.RefreshTokenModel", b =>
                 {
                     b.HasOne("ClinicAPI.Models.User", "User")
-                        .WithOne("RefreshTokenModel")
+                        .WithOne("RefreshToken")
                         .HasForeignKey("ClinicAPI.Models.RefreshTokenModel", "UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -751,7 +717,7 @@ namespace ClinicAPI.Migrations
 
             modelBuilder.Entity("ClinicAPI.Models.User", b =>
                 {
-                    b.Navigation("RefreshTokenModel");
+                    b.Navigation("RefreshToken");
                 });
 
             modelBuilder.Entity("ClinicAPI.Models.Doctor", b =>
