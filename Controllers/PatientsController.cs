@@ -21,7 +21,7 @@ namespace ClinicAPI.Controllers
 
         [HttpGet("{patientId:int}")]
         [Authorize(Policy = Permission.Patient.Read)]
-        public async Task<IActionResult> GetById(int patientId, [FromQuery] bool includeAppointments, CancellationToken ct = default)
+        public async Task<IActionResult> GetById(int patientId, [FromQuery] bool includeAppointments = false, CancellationToken ct = default)
         {
             var patient = await _patientService.GetPatientByIdAsync(patientId, includeAppointments, ct);
             return Ok(patient);

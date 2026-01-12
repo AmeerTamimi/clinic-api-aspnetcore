@@ -1,33 +1,45 @@
 ﻿using ClinicAPI.Enums;
 using ClinicAPI.Models;
 using ClinicAPI.Query;
+using System.Text.Json.Serialization;
 
 namespace ClinicAPI.Responses
 {
     public class PatientResponse : UserResponse
     {
-        public RiskLevel RiskLevel { get; set; }
-        public BloodType BloodType { get; set; }
-        public string Allergies { get; set; }
-        public string Note { get; set; }
-        public int DoctorId { get; set; }
-        public List<AppointmentResponse>? Appointments { get; set; }
+        [JsonPropertyOrder(100)] public RiskLevel? RiskLevel { get; set; }
+        [JsonPropertyOrder(101)] public BloodType? BloodType { get; set; }
+        [JsonPropertyOrder(102)] public string? Allergies { get; set; }
+        [JsonPropertyOrder(103)] public string? Note { get; set; }
+
+        [JsonPropertyOrder(104)] public int DoctorId { get; set; }
+        [JsonPropertyOrder(105)] public List<AppointmentResponse> Appointments { get; set; } = new();
+
         private PatientResponse() { }
 
-        public static PatientResponse FromModel(Patient patient , bool includeAppointments)
+        public static PatientResponse FromModel(Patient patient, bool includeAppointments)
         {
-            var patientResponse = new PatientResponse();
-            patientResponse.UserId = patient.UserId;
-            patientResponse.FirstName = patient.FirstName;
-            patientResponse.LastName = patient.LastName;
-            patientResponse.Age = patient.Age;
-            patientResponse.DoctorId = patient.DoctorId;
-            
-            if(patient.PatientAppointments != null && includeAppointments)
+            var patientResponse = new PatientResponse
             {
-                patientResponse.Appointments = patient.PatientAppointments.Where(a => a.PatientUserId == patientResponse.UserId)
-                                                                   .Select(a => AppointmentResponse.FromModel(a))
-                                                                   .ToList();
+                UserId = patient.UserId,
+                FirstName = patient.FirstName,
+                LastName = patient.LastName,
+                Age = patient.Age,
+                Phone = patient.Phone,
+                Email = patient.Email,
+
+                RiskLevel = patient.RiskLevel,
+                BloodType = patient.BloodType,
+                Allergies = patient.Allergies,
+                Note = patient.Note,
+                DoctorId = patient.DoctorId
+            };
+
+            if (includeAppointments && patient.PatientAppointments is not null)
+            {
+                patientResponse.Appointments = patient.PatientAppointments
+                    .Select(AppointmentResponse.FromModel)
+                    .ToList();
             }
 
             return patientResponse;
@@ -35,10 +47,7 @@ namespace ClinicAPI.Responses
 
         public static IEnumerable<PatientResponse>? FromModels(IEnumerable<Patient>? patients, PatientQuery query)
         {
-            if (patients == null)
-                return null;
-
-            return patients.Select(p => FromModel(p , query.IncludeAppointments));
+            return patients?.Select(p => FromModel(p, query.IncludeAppointments));
         }
     }
 }

@@ -11,11 +11,6 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-
-
-// wanna make refresh token repo , that ahs the method that will get the refresh token !!!!!!
-// and saves also !!!
-
 namespace ClinicAPI.Service
 {
     public class JwtTokenService : IJwtTokenService
@@ -29,25 +24,82 @@ namespace ClinicAPI.Service
             _userRepo = userRepo;
             _refreshTokenRepo = refreshTokenRepo;
         }
+
         public async Task<JwtTokenResponse> GenerateAccessToken(JwtTokenRequest request)
+        {
+            
+            var user = await _userRepo.GetUserByIdAsync(request.UserId);
+            if (user is null) throw new NotFoundException("User Not Found");
+
+            var claims = FillClaims(user);
+            
+            if(!ValidPassword(request.Password!, user))
+                throw new ValidationException("Wrong Password , Try Again");
+
+            var descriptor = BuildDescriptor(claims);
+
+            var refreshToken = await BuildRefreshToken(user);
+            
+            var expires = DateTime.UtcNow.AddMinutes(_jwtSettings.Value.TokenExpirationInMinutes);
+            
+            var tokenHandler = new JwtSecurityTokenHandler();
+
+            var securityToken = tokenHandler.CreateToken(descriptor);
+
+            return new JwtTokenResponse
+            {
+                AccessToken = tokenHandler.WriteToken(securityToken),
+                RefreshToken = refreshToken,
+                Expires = expires
+            };
+        }
+
+        public async Task<JwtTokenResponse> GenerateAccessTokenFromRefreshToken(RefreshTokenRequest refreshTokenRequest)
+        {
+
+            var refreshTokenHash = HashString(refreshTokenRequest.RefreshToken!);
+
+            var refreshToken = await _refreshTokenRepo.GetRefreshTokenAsync(refreshTokenHash);
+
+            ValidateRefreshToken(refreshToken);
+
+            // we issue a new token response  (access + refresh)
+            var user = await _userRepo.GetUserByIdAsync(refreshToken.UserId);
+
+            if (user is null)
+                throw new NotFoundException($"No user With Id {refreshToken.UserId} Found");
+
+            var jwtRequest = FillJwtRequest(user);
+
+            var token = GenerateAccessToken(jwtRequest);
+
+            return await token;
+        }
+
+        // Helper Methods --------------------------------------
+        public string HashString(string randomRefreshToken)
+        {
+            byte[] bytes = Encoding.UTF8.GetBytes(randomRefreshToken);
+            byte[] hashBytes = SHA256.HashData(bytes);
+
+            return Convert.ToHexString(hashBytes);
+        }
+        private string GenerateRandomRefreshToken()
+        {
+            var random = RandomNumberGenerator.GetBytes(32);
+
+            return Convert.ToBase64String(random);
+        }
+        
+        private List<Claim> FillClaims(User user)
         {
             var claims = new List<Claim>()
             {
-                new (JwtRegisteredClaimNames.Sub , request.UserId.ToString()),
-                new ("given_name" , request.FirstName),
-                new ("LastName" , request.LastName),
-                new (JwtRegisteredClaimNames.Email , request.Email),
+                new (JwtRegisteredClaimNames.Sub , user.UserId.ToString()),
+                new ("given_name" , user.FirstName),
+                new ("LastName" , user.LastName),
+                new (JwtRegisteredClaimNames.Email , user.Email)
             };
-
-            var user = await _userRepo.GetUserByIdAsync(request.UserId);
-
-            if (user is null) throw new NotFoundException("User Not Found");
-
-            var requestPasswordHash1 = HashRefreshToken(request.Password!);
-            var requestPasswordHash2 = HashRefreshToken(user.PasswordHash); // LMAO
-
-            if (requestPasswordHash2 != requestPasswordHash1)
-                throw new ValidationException("Wrong Password , Try Again");
 
             foreach(var role in user.Roles)
                 claims.Add(new(ClaimTypes.Role, role));
@@ -55,6 +107,20 @@ namespace ClinicAPI.Service
             foreach (var permission in user.Permissions)
                 claims.Add(new("permission", permission));
 
+            return claims;
+        }
+        private bool ValidPassword(string password , User user)
+        {
+            var requestPasswordHash1 = HashRefreshToken(password);
+            var requestPasswordHash2 = HashRefreshToken(user.PasswordHash); // LMAO
+
+            if (requestPasswordHash2 != requestPasswordHash1)
+                return false;
+
+            return true;
+        }
+        private SecurityTokenDescriptor BuildDescriptor(List<Claim> claims)
+        {
             var settings = _jwtSettings.Value;
             var issuer = settings.Issuer;
             var audience = settings.Audience;
@@ -73,10 +139,10 @@ namespace ClinicAPI.Service
                 )
             };
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            var securityToken = tokenHandler.CreateToken(descriptor);
-
+            return descriptor;
+        }
+        private async Task<string> BuildRefreshToken(User user)
+        {
             var randomRefreshToken = GenerateRandomRefreshToken();
 
             var hashedRefreshToken = HashRefreshToken(randomRefreshToken);
@@ -86,66 +152,34 @@ namespace ClinicAPI.Service
             var refreshToken = new RefreshTokenModel()
             {
                 RefreshTokenHash = hashedRefreshToken,
-                UserId = request.UserId,
+                UserId = user.UserId,
                 Expires = DateTime.UtcNow.AddHours(12)
-            };            
+            };
 
-            await _refreshTokenRepo.DeleteRefreshTokenAsync(user.UserId);            
+            await _refreshTokenRepo.DeleteRefreshTokenAsync(user.UserId);
             await _refreshTokenRepo.AddRefreshTokenAsync(refreshToken);
 
-            return new JwtTokenResponse
-            {
-                AccessToken = tokenHandler.WriteToken(securityToken),
-                RefreshToken = randomRefreshToken,
-                Expires = expires
-            };
+            return randomRefreshToken;
         }
-
-        public async Task<JwtTokenResponse> GenerateAccessTokenFromRefreshToken(RefreshTokenRequest request)
+        private void ValidateRefreshToken(RefreshTokenModel refreshToken)
         {
-            // if valid refresh Token
-            var refreshTokenHash = HashRefreshToken(request.RefreshToken);
-            var refreshToken = await _refreshTokenRepo.GetRefreshTokenAsync(refreshTokenHash);
-
             if (refreshToken is null)
                 throw new ValidationException("Refresh is not Valid");
 
             if (refreshToken.Expires < DateTime.UtcNow)
                 throw new ValidationException("Refresh is Expired");
-
-            // we issue a new token response  (access + refresh)
-
-            var user = await _userRepo.GetUserByIdAsync(refreshToken.UserId);
-
-            var jwtRequest = new JwtTokenRequest()
-            {
-                UserId = user.UserId,
-                FirstName = user.FirstName,
-                LastName = user.LastName,
-                Email = user.Email,
-                Phone = user.Phone,
-                Password = user.PasswordHash,
-
-            };
-
-            var token = GenerateAccessToken(jwtRequest);
-
-            return await token;
         }
-
-        public string GenerateRandomRefreshToken()
+        private JwtTokenRequest FillJwtRequest(User user)
         {
-            var random = RandomNumberGenerator.GetBytes(32);
+            return new JwtTokenRequest()
+                {
+                    UserId = user!.UserId,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    Email = user.Email,
+                    Password = user.PasswordHash,
 
-            return Convert.ToBase64String(random);
-        }
-
-        public string HashRefreshToken(string randomRefreshToken)
-        {
-            byte[] bytes = Encoding.UTF8.GetBytes(randomRefreshToken);
-            byte[] hashBytes = SHA256.HashData(bytes);
-
-            return Convert.ToHexString(hashBytes);
+                };
         }
     } 
 }

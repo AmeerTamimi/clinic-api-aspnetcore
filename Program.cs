@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // ======================================== DI (registering services and configuring Dependecies) Goes Here =================================
 
-// Options Pattern Here 
+// using Options Pattern 
 builder.Services.AddOptions<ClinicSettings>()
     .Bind(builder.Configuration.GetSection(clinicName));
 

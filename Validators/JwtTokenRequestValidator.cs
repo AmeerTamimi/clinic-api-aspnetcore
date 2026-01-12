@@ -27,10 +27,6 @@ namespace ClinicAPI.Validators
                 .EmailAddress().WithMessage("Email must be a valid email address")
                 .MaximumLength(255).WithMessage("Email must be at most 255 characters");
 
-            RuleFor(x => x.Phone)
-                .NotEmpty().WithMessage("You must fill the Phone")
-                .Matches(@"^\+?[0-9]{8,15}$").WithMessage("Phone must be 8-15 digits, optionally starting with +");
-
             RuleFor(x => x.Password)
                 .NotEmpty().WithMessage("You must fill the Password")
                 .MinimumLength(8).WithMessage("Password must be at least 8 characters")
