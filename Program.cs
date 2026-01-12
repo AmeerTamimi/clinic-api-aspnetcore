@@ -44,7 +44,7 @@ builder.Services.AddDbContext<ClinicDbContext>(options =>
     options.UseSqlite("Data Source = clinic.db");
 });
 
-// Adding the Authentication Configurations (Jwt as a scheme)
+// Adding the Authentication Configurations (Jwt as an Authentication scheme)
 builder.Services.AddJwtAuthentication();
 
 // Adding Authorization Rules
@@ -55,6 +55,15 @@ var app = builder.Build();
 // ============================================================== MiddleWares Goes here ===================================================
 
 app.UseExceptionHandler();
+
+// No Http any moooooooooooooooooooooooooooooore
+app.UseHttpsRedirection();
+
+// Browser side redirect (or fix lets say)
+if (app.Environment.IsProduction())
+{
+    app.UseHsts();
+}
 
 // This will add all Controllers Endpoints to our Route-Table , so Asp.net could pick The controllers' Endpoints and not give 404
 app.MapControllers();

@@ -111,8 +111,8 @@ namespace ClinicAPI.Service
         }
         private bool ValidPassword(string password , User user)
         {
-            var requestPasswordHash1 = HashRefreshToken(password);
-            var requestPasswordHash2 = HashRefreshToken(user.PasswordHash); // LMAO
+            var requestPasswordHash1 = HashString(password);
+            var requestPasswordHash2 = HashString(user.PasswordHash); // LMAO
 
             if (requestPasswordHash2 != requestPasswordHash1)
                 return false;
@@ -145,7 +145,7 @@ namespace ClinicAPI.Service
         {
             var randomRefreshToken = GenerateRandomRefreshToken();
 
-            var hashedRefreshToken = HashRefreshToken(randomRefreshToken);
+            var hashedRefreshToken = HashString(randomRefreshToken);
 
             user.RefreshToken = randomRefreshToken;
 
