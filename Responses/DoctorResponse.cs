@@ -35,7 +35,7 @@ namespace ClinicAPI.Responses
             if (includePatients && doctor.DoctorPatients is not null)
             {
                 doctorResponse.Patients = doctor.DoctorPatients
-                    .Select(p => PatientResponse.FromModel(p, includeAppointments: false))
+                    .Select(p => PatientResponse.FromModel(p, includeAppointments: false , null))
                     .ToList();
             }
 
@@ -49,7 +49,7 @@ namespace ClinicAPI.Responses
             return doctorResponse;
         }
 
-        public static IEnumerable<DoctorResponse>? FromModels(IEnumerable<Doctor>? doctors, DoctorQuery query)
+        public static IEnumerable<DoctorResponse>? FromModels(IEnumerable<Doctor>? doctors = null, DoctorQuery query = null)
         { 
             return doctors?.Select(d => FromModel(d, query.IncludePatients, query.IncludeAppointments)); ;
         }

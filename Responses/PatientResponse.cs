@@ -1,6 +1,7 @@
 ﻿using ClinicAPI.Enums;
 using ClinicAPI.Models;
 using ClinicAPI.Query;
+using Microsoft.AspNetCore.DataProtection;
 using System.Text.Json.Serialization;
 
 namespace ClinicAPI.Responses
@@ -17,21 +18,21 @@ namespace ClinicAPI.Responses
 
         private PatientResponse() { }
 
-        public static PatientResponse FromModel(Patient patient, bool includeAppointments)
+        public static PatientResponse FromModel(Patient patient, bool includeAppointments , IDataProtector protector)
         {
             var patientResponse = new PatientResponse
             {
                 UserId = patient.UserId,
-                FirstName = patient.FirstName,
-                LastName = patient.LastName,
+                FirstName = protector.Unprotect(patient.FirstName),
+                LastName = protector.Unprotect(patient.LastName),
                 Age = patient.Age,
-                Phone = patient.Phone,
-                Email = patient.Email,
+                Phone = protector.Unprotect(patient.Phone),
+                Email = protector.Unprotect(patient.Email),
 
                 RiskLevel = patient.RiskLevel,
                 BloodType = patient.BloodType,
-                Allergies = patient.Allergies,
-                Note = patient.Note,
+                Allergies = protector.Unprotect(patient.Allergies!),
+                Note = protector.Unprotect(patient.Note!),
                 DoctorId = patient.DoctorId
             };
 
@@ -45,9 +46,9 @@ namespace ClinicAPI.Responses
             return patientResponse;
         }
 
-        public static IEnumerable<PatientResponse>? FromModels(IEnumerable<Patient>? patients, PatientQuery query)
+        public static IEnumerable<PatientResponse>? FromModels(IEnumerable<Patient>? patients, PatientQuery query , IDataProtector protector)
         {
-            return patients?.Select(p => FromModel(p, query.IncludeAppointments));
+            return patients?.Select(p => FromModel(p, query.IncludeAppointments , protector));
         }
     }
 }

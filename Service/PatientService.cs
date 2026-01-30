@@ -4,6 +4,7 @@ using ClinicAPI.Responses;
 using ClinicAPI.CustomExceptions;
 using ClinicAPI.Repositories;
 using ClinicAPI.Query;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace ClinicAPI.Service
 {
@@ -11,11 +12,15 @@ namespace ClinicAPI.Service
     {
         private readonly IPatientRepo _patientRepo;
         private readonly IAppointmentRepo _appointmentRepo;
+        private readonly IDataProtector _protector;
 
-        public PatientService(IPatientRepo patientRepo, IAppointmentRepo appointmentRepo)
+        public PatientService(IPatientRepo patientRepo,
+                              IAppointmentRepo appointmentRepo ,
+                              IDataProtectionProvider protectionProvider)
         {
             _patientRepo = patientRepo;
             _appointmentRepo = appointmentRepo;
+            _protector = protectionProvider.CreateProtector("Patient.Protection");
         }
 
         public async Task<PatientResponse> GetPatientByIdAsync(int patientId , bool includeAppointments = false, CancellationToken ct = default)
@@ -25,7 +30,7 @@ namespace ClinicAPI.Service
             if (patient is null)
                 throw new NotFoundException("Patient Not Found");
 
-            return PatientResponse.FromModel(patient, includeAppointments);
+            return PatientResponse.FromModel(patient, includeAppointments , _protector);
         }
 
         public async Task<PatientResponse> AddNewPatientAsync(CreatePatientRequest patientRequest, CancellationToken ct = default)
@@ -36,7 +41,7 @@ namespace ClinicAPI.Service
 
             var createdPatient = await _patientRepo.AddNewPatientAsync(patient, ct);
 
-            return PatientResponse.FromModel(createdPatient, false);
+            return PatientResponse.FromModel(createdPatient, false , _protector);
         }
 
         public async Task UpdatePatientAsync(UpdatePatientRequest patientRequest, int patientId, CancellationToken ct = default)
@@ -64,7 +69,7 @@ namespace ClinicAPI.Service
             if (!succeded)
                 throw new ServerException("Sorry, couldn't delete the Patient");
 
-            return PatientResponse.FromModel(patient, true);
+            return PatientResponse.FromModel(patient, true , _protector);
         }
 
         public async Task<List<AppointmentResponse>> GetAppointmentByPatientIdAsync(int patientId , AppointmentQuery query, CancellationToken ct = default)
@@ -96,7 +101,7 @@ namespace ClinicAPI.Service
 
             var patients = await _patientRepo.GetPatientPageAsync(page, pageSize , ct);
 
-            var patientsResponse = PatientResponse.FromModels(patients, query);
+            var patientsResponse = PatientResponse.FromModels(patients, query , _protector);
 
             return PagedResult<PatientResponse>.GetPagedItems(patientsResponse!, totalItems, page, pageSize);
         }
@@ -133,10 +138,17 @@ namespace ClinicAPI.Service
         {
             var patient = new Patient
             {
-                FirstName = patientRequest.FirstName!,
-                LastName = patientRequest.LastName!,
+                FirstName = _protector.Protect(patientRequest.FirstName!),
+                LastName = _protector.Protect(patientRequest.LastName!),
+                Email = _protector.Protect(patientRequest.Email!),
+                Phone = _protector.Protect(patientRequest.Phone!),
+                PasswordHash = _protector.Protect(patientRequest.Password!),
                 Age = patientRequest.Age,
-                DoctorId = patientRequest.DoctorId
+                DoctorId = patientRequest.DoctorId,
+                RiskLevel = patientRequest.RiskLevel,
+                BloodType = patientRequest.BloodType,
+                Allergies = _protector.Protect(patientRequest.Allergies!),
+                Note = _protector.Protect(patientRequest.Note!)
             };
 
             return patient;

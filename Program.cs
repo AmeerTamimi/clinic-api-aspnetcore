@@ -1,59 +1,16 @@
 using ClinicAPI.Configurations;
-using Microsoft.Extensions.Options;
-using static ClinicAPI.Configurations.ClinicSettings;
 using ClinicAPI.Registirations;
+using Microsoft.Extensions.Options;
 using System.Diagnostics;
-using ClinicAPI.CustomExceptions;
-using System.Text.Json.Serialization;
-using ClinicAPI.Presistence;
-using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // ======================================== DI (registering services and configuring Dependecies) Goes Here =================================
-
-// using Options Pattern 
-builder.Services.AddOptions<ClinicSettings>()
-    .Bind(builder.Configuration.GetSection(clinicName));
-
-builder.Services.AddOptions<JwtSettings>()
-    .Bind(builder.Configuration.GetSection(JwtSettings.JwtSettingsName));
-
-builder.Services.AddControllers()
-                .AddJsonOptions(o =>
-                            o.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()));
-
-// Try Catching the whole pipline From This Guy btw
-builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
-
-// Rfc 9457 ,,, like spelling that name lowkey
-builder.Services.AddProblemDetails();
-
-// Service/Business Layer Services
-builder.Services.AddBusinessServices();
-
-// Infrastructure Layer Services
-builder.Services.AddInfrastructureServices();
-
-// Validators Services | Auto Fluent Validation
-builder.Services.AddValidatorsServices();
-
-// Adding The Db Context , (Since we injected it on ClinicDbContext/All Repos)
-builder.Services.AddDbContext<ClinicDbContext>(options =>
-{
-    options.UseSqlite("Data Source = clinic.db");
-});
-
-// Adding the Authentication Configurations (Jwt as an Authentication scheme)
-builder.Services.AddJwtAuthentication();
-
-// Adding Authorization Rules
-builder.Services.AddJwtAuthorization();
+builder.Services.AddApplicationServices(builder.Configuration);
 
 var app = builder.Build();
 
 // ============================================================== MiddleWares Goes here ===================================================
-
 app.UseExceptionHandler();
 
 // No Http any moooooooooooooooooooooooooooooore
@@ -63,6 +20,11 @@ app.UseHttpsRedirection();
 if (app.Environment.IsProduction())
 {
     app.UseHsts();
+}
+else
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 // This will add all Controllers Endpoints to our Route-Table , so Asp.net could pick The controllers' Endpoints and not give 404

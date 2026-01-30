@@ -4,6 +4,7 @@ using ClinicAPI.Query;
 using ClinicAPI.Repositories;
 using ClinicAPI.Requests;
 using ClinicAPI.Responses;
+using Microsoft.AspNetCore.DataProtection;
 
 namespace ClinicAPI.Service
 {
@@ -63,7 +64,7 @@ namespace ClinicAPI.Service
             return DoctorResponse.FromModel(doctor, true, true);
         }
 
-        public async Task<List<PatientResponse>> GetDoctorPatientsAsync(int doctorId, PatientQuery query, CancellationToken ct = default)
+        public async Task<List<DoctorResponse>> GetDoctorPatientsAsync(int doctorId, PatientQuery query, CancellationToken ct = default)
         {
             var doctor = await _doctorRepo.GetDoctorByIdAsync(doctorId, ct);
 
@@ -75,9 +76,8 @@ namespace ClinicAPI.Service
             if (patients is null)
                 return [];
 
-            return PatientResponse.FromModels(patients, query)!.ToList();
+            return DoctorResponse.FromModels()!.ToList();
         }
-
         public async Task<List<AppointmentResponse>> GetDoctorAppointmentsAsync(int doctorId, AppointmentQuery query, CancellationToken ct = default)
         {
             var doctor = await _doctorRepo.GetDoctorByIdAsync(doctorId, ct);
