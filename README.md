@@ -21,7 +21,7 @@ Built while following Eng. Issam’s ASP.NET Core Web API course, then extended 
   - Refresh token is generated as a **real random token**
   - Only the **hash** is stored in DB (raw token is never stored) 
   - Supports **1 refresh token per user** (enforced by unique `UserId`) 
-  - Refresh token entity uses `RefreshTokenId` as the **primary key** (DB-friendly), and `RefreshTokenHash` as a **unique indexed** column ✅
+  - Refresh token entity uses `RefreshTokenId` as the **primary key** (DB-friendly), and `RefreshTokenHash` as a **unique indexed** column 
 - Policy-based authorization using permissions (`Permissions/Permission.cs`) + registrations
 
 
